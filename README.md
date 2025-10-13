@@ -39,7 +39,7 @@ bibtex main
 xelatex main.tex
 xelatex main.tex
 
-	3.	编译完成后将在根目录下生成 main.pdf。
+3.	编译完成后将在根目录下生成 main.pdf。
 
 💡 若使用 VS Code + LaTeX Workshop 插件，可直接通过 Ctrl + Alt + B 编译。
 
