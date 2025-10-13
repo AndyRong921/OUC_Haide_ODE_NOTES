@@ -31,15 +31,7 @@ ODE-Notes/
 ## ⚙️ 编译方法
 
 1. 请确保已安装 `TeX Live` 或 `MiKTeX`（推荐最新版）。
-2. 在命令行中执行以下命令：
-
-```bash
-xelatex main.tex
-bibtex main
-xelatex main.tex
-xelatex main.tex
-
-3.	编译完成后将在根目录下生成 main.pdf。
+2. 编译完成后将在根目录下生成 main.pdf。
 
 💡 若使用 VS Code + LaTeX Workshop 插件，可直接通过 Ctrl + Alt + B 编译。
 
