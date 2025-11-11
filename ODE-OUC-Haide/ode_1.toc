@@ -1,0 +1,295 @@
+\csuse {eb@toc@style@set@subsubsection@sub2}
+\csuse {eb@toc@style@set@chapter@emph}
+\CTEX@ifnamefalse 
+\contentsline {chapter}{§1 微分方程概论}{1}{chapter*.2}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§1.1 微分方程概述}{1}{section*.3}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§1.2 微分方程的基本概念}{1}{section*.8}%
+\CTEX@ifnamefalse 
+\contentsline {chapter}{§2 一阶微分方程的初等解法}{7}{chapter*.53}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§2.1 变量分离方程与变量替换}{7}{section*.54}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§2.2 线性微分方程与常数变易法}{13}{section*.91}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§2.3 全微分方程和积分因子}{19}{section*.128}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§2.4 一阶隐式微分方程}{26}{section*.166}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{思考：}{32}{paragraph*.196}%
+\CTEX@ifnamefalse 
+\contentsline {chapter}{§3 一阶微分方程的解的存在性定理}{33}{chapter*.197}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{内容}{33}{paragraph*.198}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§3.1 解的存在唯一性定理与逐步逼近法}{33}{section*.199}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm. (Picard)}{33}{paragraph*.202}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Prop 1.}{34}{paragraph*.203}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{34}{paragraph*.204}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Prop 2.}{34}{paragraph*.205}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{35}{paragraph*.206}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Prop 3.}{35}{paragraph*.207}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{35}{paragraph*.208}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Prop 4.}{36}{paragraph*.209}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{36}{paragraph*.210}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Prop 5.}{36}{paragraph*.211}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{37}{paragraph*.212}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem. 对定理的几点说明：}{37}{paragraph*.213}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm.}{37}{paragraph*.214}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例}{38}{paragraph*.215}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例}{38}{paragraph*.216}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ {\@@par }\noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{38}{paragraph*.217}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例}{38}{paragraph*.218}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解}{38}{paragraph*.219}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm2.}{39}{paragraph*.221}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{39}{paragraph*.222}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{39}{paragraph*.226}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例}{40}{paragraph*.227}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解}{40}{paragraph*.228}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem. (1)}{40}{paragraph*.229}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem. (2)}{41}{paragraph*.230}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§3.2 解的延拓}{41}{section*.231}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{41}{paragraph*.237}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm.}{42}{paragraph*.239}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{42}{paragraph*.240}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Cor.}{42}{paragraph*.241}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{42}{paragraph*.242}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例1}{42}{paragraph*.243}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解1}{42}{paragraph*.244}%
+\CTEX@ifnamefalse 
+\contentsline {chapter}{§4 高阶微分方程}{44}{chapter*.245}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{内容：}{44}{paragraph*.246}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§4.1 线性微分方程的一般理论}{44}{section*.247}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm.}{44}{paragraph*.253}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例1}{44}{paragraph*.254}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解1}{45}{paragraph*.255}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{45}{paragraph*.258}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{45}{paragraph*.259}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例：}{45}{paragraph*.260}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{判定法则：}{45}{paragraph*.261}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{46}{paragraph*.262}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm 2.}{46}{paragraph*.263}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{46}{paragraph*.264}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例：}{46}{paragraph*.265}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Cor.}{46}{paragraph*.266}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm 3.（叠加原理）}{46}{paragraph*.267}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{46}{paragraph*.268}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm 4.}{46}{paragraph*.270}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{46}{paragraph*.271}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Cor.}{47}{paragraph*.272}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Cor.}{47}{paragraph*.273}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm 5.}{47}{paragraph*.275}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{47}{paragraph*.276}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm 6.（齐次线性微分方程通解的结构定理）}{47}{paragraph*.277}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{48}{paragraph*.279}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例1}{48}{paragraph*.280}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解1}{48}{paragraph*.281}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例：}{48}{paragraph*.282}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Cor.}{48}{paragraph*.283}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Cor.}{48}{paragraph*.284}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{49}{paragraph*.285}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm 7.}{49}{paragraph*.286}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例（Liouville 公式）}{49}{paragraph*.287}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm 8.}{49}{paragraph*.292}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{ \par \noindent \textbf {\color {second}证明\tmspace +\thickmuskip {.2777em}} \color {black!90}\fangsong }{50}{paragraph*.294}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例1}{51}{paragraph*.301}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解1}{51}{paragraph*.302}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例2}{51}{paragraph*.303}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解2}{51}{paragraph*.304}%
+\CTEX@ifnamefalse 
+\contentsline {section}{§4.2 常系数线性微分方程的解法}{52}{section*.305}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{52}{paragraph*.308}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{52}{paragraph*.309}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{52}{paragraph*.310}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{52}{paragraph*.311}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{52}{paragraph*.312}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{52}{paragraph*.313}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{52}{paragraph*.315}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{53}{paragraph*.316}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Def.}{53}{paragraph*.318}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm. 1}{53}{paragraph*.319}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm. 2}{53}{paragraph*.320}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{53}{paragraph*.324}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{(1) 特征根为互异实根的情形}{54}{paragraph*.326}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例 1}{54}{paragraph*.327}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解1}{54}{paragraph*.328}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例 2}{55}{paragraph*.329}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解2}{55}{paragraph*.330}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例 3}{55}{paragraph*.331}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解3}{55}{paragraph*.332}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Thm. 3}{56}{paragraph*.333}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例 4}{56}{paragraph*.335}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解4}{57}{paragraph*.336}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例5}{57}{paragraph*.337}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解5}{57}{paragraph*.338}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例6(1)}{57}{paragraph*.339}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解6(1)}{57}{paragraph*.340}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例6(2)}{57}{paragraph*.341}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解6(2)}{57}{paragraph*.342}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{考虑方程}{57}{paragraph*.343}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解答}{57}{paragraph*.344}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Cor.}{58}{paragraph*.345}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例 7}{58}{paragraph*.347}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解7}{58}{paragraph*.348}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{易得特解}{58}{paragraph*.349}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例 8}{59}{paragraph*.350}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Sol.}{59}{paragraph*.351}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{59}{paragraph*.352}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例 9}{59}{paragraph*.353}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Sol.}{59}{paragraph*.354}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{类型 I 求解}{60}{paragraph*.358}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例10（1）}{60}{paragraph*.359}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解10（1）}{60}{paragraph*.360}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例10（2）}{61}{paragraph*.361}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解10（2）}{61}{paragraph*.362}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例11}{61}{paragraph*.363}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解11}{61}{paragraph*.364}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例12(1)}{62}{paragraph*.367}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解12(1)}{62}{paragraph*.368}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例12(2)}{62}{paragraph*.369}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{62}{paragraph*.370}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例：}{63}{paragraph*.371}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.}{63}{paragraph*.374}%
+\CTEX@ifnamefalse 
+\contentsline {section}{4.3 高阶方程的降阶及积分法解法}{64}{section*.378}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例1}{64}{paragraph*.380}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解1}{65}{paragraph*.381}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.第一类：不显含未知函数及其 $k-1$ 阶导数的微分方程 $(1 \le k \le n)$}{65}{paragraph*.382}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例2}{65}{paragraph*.383}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解2}{65}{paragraph*.384}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{Rem.第二类：不显含自变量的自治方程}{65}{paragraph*.385}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{例3}{65}{paragraph*.386}%
+\CTEX@ifnamefalse 
+\contentsline {paragraph}{解3}{65}{paragraph*.387}%
+\contentsfinish 

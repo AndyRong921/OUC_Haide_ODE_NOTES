@@ -1,0 +1,4676 @@
+% ========= ODE-§1（使用 ctexbook + easybase/eb-elegantbook）=========
+\documentclass[UTF8,openany,zihao=-4]{ctexbook}
+\usepackage{easybase}
+\usepackage[lang=cn]{eb-elegantbook}
+\newcommand{\remarkinfo}[1]{\par\textbf{备注：}#1}
+% —— 页眉：横线 + 当前 section 标题 —— 
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{\nouppercase{\rightmark}}
+\fancyhead[R]{\thepage}
+\makeatletter
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\makeatother
+
+% 常用包
+\usepackage{amsmath,amssymb,amsfonts,bm}
+\usepackage{physics}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{float}
+
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\setlist{nosep}
+
+% —— 若模板命令不存在，则定义为 no-op（防止未装 easybook 报错） ——
+\makeatletter
+\@ifundefined{SetTocStyle}{\newcommand\SetTocStyle[3][]{}}{}
+\@ifundefined{UseTocStyle}{\newcommand\UseTocStyle[3][]{}}{}
+\@ifundefined{btocgroup}{\newcommand\btocgroup{}}{}
+\@ifundefined{etocgroup}{\newcommand\etocgroup{}}{}
+\@ifundefined{subtitle}{\newcommand\subtitle[1]{}}{}
+\@ifundefined{bioinfo}{\newcommand\bioinfo[2]{}}{}
+\@ifundefined{titlerule}{\newcommand\titlerule{}}
+\@ifundefined{codehigh}{\newcommand\codehigh{}}
+\makeatother
+
+% —— 关键：目录与编号深度（要放在 \begin{document} 之前） ——
+\setcounter{secnumdepth}{2} % 编号到 subsection（需要更深可调为 3）
+\setcounter{tocdepth}{2}    % 目录显示到 subsection
+% ——— 书籍信息 ———
+\title{常微分方程-2025年秋季学期}
+
+\author {容志谨（课程助教）}
+\date{}
+\bioinfo{联系方式}{rzj@stu.ouc.edu.cn}
+
+% ———（可选）目录样式：若样式包未提供这些命令，上面的 no-op 会自动忽略 ———
+\SetTocStyle{chapter}{emph}{
+  insert=\bigskipamount,
+  toctitlerule=\titlerule*[.5pc]{.},
+  pagenumberformat=\textbf
+}
+\SetTocStyle{section}{sub1}{tocindent=2em}
+\SetTocStyle{subsection}{sub1}{tocindent=3em}
+\SetTocStyle{subsubsection}{sub2}{tocindent=3.8em}
+\UseTocStyle{subsubsection}{sub2}{toc}
+
+\begin{document}
+\maketitle
+\frontmatter
+\tableofcontents
+\mainmatter
+% —— 无编号标题也能入目录并设置页眉 —— 
+\newcommand{\mychapter}[1]{%
+  \chapter*{#1}%
+  \addcontentsline{toc}{chapter}{#1}%
+  \markboth{#1}{#1}%
+}
+\newcommand{\mysection}[1]{%
+  \section*{#1}%
+  \addcontentsline{toc}{section}{#1}%
+  \markright{#1}%
+}
+% （如还要小节入目录，可再做 \mysubsection 同理）
+\setcounter{tocdepth}{2} % 目录深度按需设定
+% ===================== 正文开始 =====================
+\btocgroup
+\UseTocStyle{chapter}{emph}{toc}
+\mychapter{§1 微分方程概论}
+\etocgroup
+
+\mysection{§1.1 微分方程概述}
+
+\paragraph*{例1（元素衰减）}
+\[
+\frac{d R(t)}{dt}=-k R(t)
+\ \Rightarrow\ 
+\frac{1}{R(t)}\,dR(t)=-k\,dt
+\ \Rightarrow\
+\ln R(t)=-kt+C_1,\quad R(t)=R_0 e^{-kt}.
+\]
+
+\paragraph*{例2（物体冷却，Newton 冷却定律）}
+\[
+\frac{dx}{dt}=-k\bigl(x-\theta_0\bigr).
+\]
+
+\paragraph*{例3（传染病模型）}
+\[
+N\,\frac{di}{dt}=\lambda\,N\,S\cdot i
+\ \Rightarrow\ 
+\frac{di}{dt}=\lambda\,i(1-i).
+\]
+
+\paragraph*{例4（单摆）}
+\[
+\frac{d^2\varphi}{dt^2}=-\frac{g}{\ell}\sin\varphi.
+\]
+当 $\varphi$ 很小时 $\sin\varphi\approx \varphi$，得
+\[
+\frac{d^2\varphi}{dt^2}+\frac{g}{\ell}\,\varphi=0.
+\]
+若有阻尼：
+\[
+\frac{d^2\varphi}{dt^2}+\frac{\mu}{m}\frac{d\varphi}{dt}
++\frac{g}{\ell}\,\varphi=0.
+\]
+若有外力：
+\[
+\frac{d^2\varphi}{dt^2}+\frac{\mu}{m}\frac{d\varphi}{dt}
++\frac{g}{\ell}\,\varphi=\frac{1}{m\ell}F(t),
+\]
+给定初值：$\varphi(0)=\varphi_0,\ \dot\varphi(0)=v_0$。
+
+\mysection{§1.2 微分方程的基本概念}
+
+\section*{一、ODE 的定义}
+联系自变量、因变量及其导数的等式称为微分方程。
+\begin{align}
+&\frac{d^2y}{dt^2}+b\frac{dy}{dt}+c\,y=f(t), \tag{1}\\
+&\left(\frac{dy}{dt}\right)^2+t\frac{dy}{dt}+y=0, \tag{2}\\
+&\frac{\partial^2 T}{\partial x^2}+\frac{\partial^2 T}{\partial y^2}=0. \tag{3}
+\end{align}
+
+\section*{二、分类}
+\begin{enumerate}[label=\arabic*)]
+\item 按自变量个数：
+\[
+\left\{
+\begin{aligned}
+&\text{ODE：自变量只有一个（(1)(2)）；}\\
+&\text{PDE：自变量不止一个(3)。}
+\end{aligned}
+\right.
+\]
+
+\item 线性与非线性：
+\[
+\left\{
+\begin{aligned}
+&\text{线性方程：函数及其各阶导数为一次有理式；((1)(3))}\\
+&\text{非线性方程：非线性的方程。（2）}
+\end{aligned}
+\right.
+\]
+
+\item 阶数：方程中出现的未知函数的最高阶导数的阶数
+\[
+\left\{
+\begin{aligned}
+&\text{一阶方程：(2)}\\
+&\text{二阶方程:((1)(3))}
+\end{aligned}
+\right.
+\]
+\end{enumerate}
+
+\paragraph*{Rem.}
+\begin{enumerate}[label=(\arabic*)]
+\item 一阶方程：$F(t,y,y')=0$ 或 $y'=f(t,y)$。
+\item $n$ 阶方程：$F(t,y,y',\dots,y^{(n)})=0$ 或 $y^{(n)}=f\bigl(t,y,\dots,y^{(n-1)}\bigr)$。
+\item 一阶显式方程有时可化成微分形式：
+\[
+\frac{dy}{dx}=-\frac{M(x,y)}{N(x,y)}
+\ \Rightarrow\
+M(x,y)\,dx+N(x,y)\,dy=0.
+\]
+\item $n$ 阶线性微分方程的一般形式：
+\[
+\frac{d^{n}y}{dt^{n}}+a_1(t)\frac{d^{n-1}y}{dt^{n-1}}
++\cdots+a_n(t)\,y=f(t).
+\]
+\end{enumerate}
+\paragraph*{例}
+$y\,y''+1=0$ 为二阶非线性微分方程；$y'=y(y(x))$ 为非微分方程。
+
+\section*{三、方程的解}
+
+\subsection*{1. 定义}
+设 $y=\varphi(t)$ 在区间 $I$ 上连续且有到 $n$ 阶导数，
+若将 $y=\varphi(t)$ 及各阶导数代入
+\[
+F\bigl(t,y,y',\dots,y^{(n)}\bigr)=0\tag{$\ast$}
+\]
+恒成立，则称 $y=\varphi(t)$ 为 $(\ast)$ 在 $I$ 上的一解。
+
+\paragraph*{例}
+$y''+y=0$，$I=\mathbb{R}$。
+$y=7\sin t,\ y=3\cos t$ 均是这个方程的特解；
+\[
+y=C_1\sin t+C_2\cos t\quad \text{为通解。}
+\]
+
+\paragraph*{Rem.}
+\begin{enumerate}[label=(\arabic*)]
+\item 区间 $I$ 经常简略，简称为方程的一个解。
+\item 若关系式 $\Phi(x,y)=0$ 确定的隐函数 $y=\varphi(x)$ 为方程 $(\ast)$ 的解，
+则称 $\varphi(x)$ 为方程 $(\ast)$ 的隐式解。
+\end{enumerate}
+
+\paragraph*{例}
+\[
+\frac{dy}{dx}=-\frac{x}{y}.
+\]
+
+由此得
+\[
+x\,dx+y\,dy=0 \;\;\Rightarrow\;\; x^2+y^2=C.
+\]
+
+因此 $x^2+y^2=C$ 为\;隐式解。
+
+若取 $C=1$，则
+\[
+x^2+y^2=1
+\]
+为隐式解。对应的显式解为
+\[
+y=\pm\sqrt{1-x^2},
+\]
+即 $y=\sqrt{1-x^2}$ 与 $y=-\sqrt{1-x^2}$。
+
+\subsection*{2. 方程的通解}
+
+\paragraph*{定义}
+含有 $n$ 个相互独立任意常数 $C_1,\dots,C_n$ 的解
+\[
+y=\varphi\bigl(t,C_1,\dots,C_n\bigr)
+\]
+称为 $(\ast)$ 的通解。
+\paragraph*{独立性判据}
+存在 $(C_1,\dots,C_n)$ 使雅可比
+\[
+\frac{\partial(\varphi,\varphi',\dots,\varphi^{(n-1)})}
+{\partial(C_1,\dots,C_n)}\neq 0,
+\]
+其中 $\varphi=\varphi(t,C_1,\dots,C_n)$，
+$\varphi'=\dfrac{\partial\varphi}{\partial t}$，
+$\varphi^{(n-1)}=\dfrac{\partial^{\,n-1}\varphi}{\partial t^{\,n-1}}$。
+
+\paragraph*{例} 验证$y=C_1\sin t+C_2\cos t$ 是 $y''+y=0$ 的通解：、
+\paragraph*{解} 
+\[
+y' = C_1\cos t - C_2\sin t,\quad
+y''=-C_1\sin t - C_2\cos t,
+\]
+代入 $y''+y=0$ 成立；且
+\[
+\frac{\partial(y,y')}{\partial(C_1,C_2)}
+=
+\begin{vmatrix}
+\sin t & \cos t\\
+\cos t & -\sin t
+\end{vmatrix}
+=-1\neq 0.
+\]
+因此$C_1,C_2$相互独立，所以$y=C_1\sin t+C_2\cos t$ 是 $y''+y=0$ 的通解
+
+\paragraph*{反例}$y=C_1\sin t+C_3\cos t$ 不是通解，因为
+\[
+\frac{\partial(y,y')}{\partial(C_1,C_3)}
+=
+\begin{vmatrix}
+\sin t & \cos t\\
+\cos t & \cos t
+\end{vmatrix}
+=0.
+\]
+
+\subsection*{3. 方程的特解}
+\paragraph*{定义}
+满足特定条件的解称为特解（即不包含任意常数的解）。
+\paragraph*{例}
+\[
+\begin{cases}
+y''+y=0,\\
+y(0)=0,\ y'(0)=1
+\end{cases}
+\Rightarrow \text{有通解} y=C_1\sin t+C_2\cos t,\ 
+\text{其中 } C_2=0,\ C_1=1\text{为特解}
+\]
+
+\subsection*{4. 定解条件与初值问题}
+\paragraph*{定解条件} 初值条件或边值条件
+\paragraph*{定解问题} 方程 $+$ 定解条件（初值问题【Cauchy问题】/边值问题）。
+\paragraph*{例}
+\[
+ n\text{ 阶初值问题：}\ 
+\begin{cases}
+F\bigl(t,y,y',\dots,y^{(n)}\bigr)=0 \\
+y(t_0)=y_0,\ \dots,\ y^{(n-1)}(t_0)=y_0^{(n-1)}.
+\end{cases}
+\]
+
+
+
+\paragraph*{例1}
+\[
+\begin{cases}
+\displaystyle \frac{d^2y}{dt^2}+5\frac{dy}{dt}+4y=0,\\[.3em]
+y(0)=2,\ \displaystyle \left.\frac{dy}{dt}\right|_{t=0}=1
+\end{cases}
+\]
+\paragraph*{解1}
+猜想 $y=e^{\lambda t}$是一个解，则有 $(\lambda^2+5\lambda+4)=0\Rightarrow \lambda=-1,-4$。\\
+通解 $y=C_1 e^{-t}+C_2 e^{-4t}$，$y'=-C_1 e^{-t}-4C_2 e^{-4t}$。\\
+由初值
+\[
+\begin{cases}
+C_1+C_2=2,\\
+-C_1-4C_2=1
+\end{cases}
+\Rightarrow C_1=3,\ C_2=-1,
+\]
+特解 $y=3e^{-t}-e^{-4t}$。
+
+\medskip
+\paragraph*{例2}
+求函数族 $y=C_1 e^x \cos x + C_2 e^x \sin x \quad (x)$ 所满足的微分方程
+\paragraph*{解2}
+\[
+y' = C_1 e^x(\cos x - \sin x) + C_2 e^x(\sin x + \cos x) \tag{1}
+\]
+\[
+y'' = C_1 e^x(-2\sin x) + C_2 e^x(2\cos x) \tag{2}
+\]
+
+\[
+\frac{\partial(y,y')}{\partial(C_1,C_2)}
+= \begin{vmatrix}
+e^x \cos x & e^x \sin x \\
+e^x(\cos x - \sin x) & e^x(\sin x + \cos x)
+\end{vmatrix} \neq 0,
+\ C_1, C_2 \ \text{相互独立}
+\]
+
+据 (x), (1) 式有
+\[
+C_1 = e^{-x}\bigl[y(\sin x + \cos x) - y' \sin x\bigr],
+\quad
+C_2 = e^{-x}\bigl[y(\sin x - \cos x) + y' \cos x\bigr]
+\]
+
+代入 (2) 有：
+\[
+y'' - 2y' + 2y = 0
+\]
+
+若考虑求解 $y'' - 2y' + 2y = 0$,特征方程 $\lambda^2 - 2\lambda + 2 = 0$，
+特征根 $\lambda = 1 \pm i$
+
+通解 $y = C_1 e^{(1+i)x} + C_2 e^{(1-i)x}$
+\[
+y = C_1 e^x \cos x + C_2 e^x \sin x
+\]
+
+\section*{四、微分方程及其解的几何近似}
+
+考虑：$\dfrac{dy}{dx}=f(x,y)$ 其中 $f(x,y)$ 是平面区域 $D$ 内的连续函数
+
+\paragraph*{定义} 设 $y=\varphi(x)$ 是方程在区间 $I$ 上的解，则曲线 $y=\varphi(x)$ 在 $xOy$ 平面
+是一条光滑曲线，称它为方程的\textbf{积分曲线}。
+
+\bigskip
+
+\paragraph*{Rem.}
+(1) 方程的通解 $\varphi(x,C)$ 对应 $xOy$ 平面上的一族曲线，称为
+积分曲线族。\\
+(2)满足条件 $y(x_0)=y_0$ 的特解曲线是平面上过 $(x_0,y_0)$ 的一条积分曲线。
+
+\medskip
+
+\paragraph*{定义}在区域 $D$ 内每一点 $P(x_0,y_0)$ 作一小直线段，满足斜率为 $f(x_0,y_0)$，
+称带有箭头段组成区域 $D$ 方程的方向场。小直线段为方程在 $P(x_0,y_0)$ 的线素。方程的任何一条积分曲线和它的方向场是吻合的。
+
+\paragraph*{定义} 方向场中方向相同的点的几何轨迹称为等斜线。
+ 
+考虑初值问题
+\[
+\begin{cases}
+\dfrac{dy}{dt}=f(t,y),\\
+y(t_0)=y_0.
+\end{cases}
+\]
+
+的几何说明：给定方程，在平面区域 $D$ 内初值 $y(t_0)=y_0$。上述定与方向场，求解初值问题即求过 $(t_0,y_0)$ 且与方向场吻合的积分曲线。
+
+\paragraph*{例1} $D=[-2,2]\times[-2,2]$, 求 $\dfrac{dy}{dt}=-y$ 的方向场。
+\paragraph*{解1}
+\[
+\begin{tikzpicture}[scale=1]
+\draw[->] (-2.5,0)--(2.5,0) node[right]{$t$};
+\draw[->] (0,-2.5)--(0,2.5) node[above]{$y$};
+% 简单画几个方向线段，实际可用 direction field 包更精细
+\foreach \x in {-2,-1.5,...,2}
+  \foreach \y in {-2,-1.5,...,2}
+    \draw[->,gray] (\x,\y) -- ++(0.3,-0.3*\y);
+\end{tikzpicture}
+\]
+
+\paragraph*{例2}考虑初值问题的近似解
+\[
+y(t_0+\Delta)\approx y(t_0)+f(t_0,y_0)\,\Delta,\quad 0<\Delta<\delta
+\]
+\paragraph*{解2}
+\[
+\varphi(t)=
+\begin{cases}
+y_0+f(t_0,y_0)(t-t_0), & t_0\leq t \leq t_0+\delta,\\
+y_1+f(t_1,y_1)(t-t_1), & t_1\leq t \leq t_1+\delta,\\
+\qquad \vdots & \\
+y_n+f(t_n,y_n)(t-t_n), & t_n\leq t \leq t_n+\delta,
+\end{cases}
+\qquad \text{(Euler 近似)}
+\]
+
+其中 $t_k=t_0+k\Delta,\;\; y_k=\varphi(t_k)$。
+
+\mychapter{§2 一阶微分方程的初等解法}
+$
+dy = f(x)\,dx, \ \ dx = \frac{\partial u}{\partial x}\,dx + \frac{\partial u}{\partial y}\,dy 
+\quad （全微分方程），du(x,y)=0 \;\;\Rightarrow\;\; u(x,y)=c
+$
+
+内容：变量分离方程，齐次微分方程，全微分方程，积分因子，隐式微分方程。
+
+\mysection{§2.1 变量分离方程与变量替换}
+
+\section*{一、变量分离方程}
+
+\[
+\frac{dy}{dx}=f(x)\cdot g(y) \tag{1}
+\]
+
+其中 $f(x), g(y)$ 分别是关于 $x,y$ 的连续函数。
+
+变为：$\frac{1}{g(y)}\,dy=f(x)\,dx,\quad g(y)\neq 0$
+
+两边同时积分：$\displaystyle \int \frac{1}{g(y)}dy=\int f(x)\,dx$
+
+通解：$G(y)=F(x)+c$，其中 $G(y)$ 是 $\frac{1}{g(y)}$ 的原函数，$F(x)$ 是 $f(x)$ 的原函数。
+
+若 $g(y_0)=0$，则 $y=y_0$ 也是方程 (1) 的解。
+
+\paragraph*{Rem.} 若 $g(y)=0$ 不在通解中，补上即可。
+
+\paragraph*{例1}
+\[
+\frac{dy}{dx}=-\frac{x}{y}
+\]
+
+\paragraph*{解1}
+$y\,dy=-x\,dx,\;\;\int y\,dy=\int -x\,dx,\;\;\tfrac{1}{2}y^2+\tfrac{1}{2}x^2=c,$
+
+通解 $x^2+y^2=c$
+
+\paragraph*{例2}
+\[
+\frac{dy}{dx}=\frac{y}{x}
+\]
+
+\paragraph*{解2}
+$\frac{1}{y}dy=\frac{1}{x}dx,\;\;\int \frac{1}{y}dy=\int \frac{1}{x}dx,\;\;\ln|y|=\ln|x|+c$
+
+通解 $y=cx$
+
+\paragraph*{例3} 设方程 $\dfrac{dy}{dx}=p(x)\,y$ 的通解，其中 $p(x)$ 为连续函数。
+
+\paragraph*{解3} (1) $y\neq 0$ 时：
+\[
+\frac{1}{y}dy=p(x)dx,\quad \int \frac{1}{y}dy=\int p(x)dx
+\]
+\[
+\ln y=\int p(x)dx+C,\quad y=c\cdot e^{\int p(x)dx}
+\]
+
+\paragraph*{例4} 求解 $\dfrac{dy}{dx}=y^2\cos x$ 的特解，其中$y(0)=1$。
+
+\paragraph*{解4}$y\neq 0,\;\; \int \frac{1}{y^2}dy=\int \cos x\,dx,\;\; -\frac{1}{y}=\sin x+C$
+
+$
+y=\frac{1}{-\,\sin x+C}, \quad \text{有奇解 } y=0.
+$
+
+由 $y(0)=1,\; C=-1,\; y=\dfrac{1}{1-\sin x}$
+
+\paragraph*{Rem.} 通解并非所有解。
+
+
+\section*{二、微分方程的变量分离方程}
+\[
+M(x)N(y)\,dx+P(x)Q(y)\,dy=0 \tag{2}
+\]
+
+其中 $M(x),N(y),P(x),Q(y)$ 均为连续函数。
+
+若 $N(y)P(x)\neq 0$，则：
+\[
+\frac{M(x)}{P(x)}dx+\frac{Q(y)}{N(y)}dy=0
+\]
+
+通解 $F(x)+Q(y)=C$，其中 $F(x),Q(y)$ 为 $\dfrac{M(x)}{P(x)},\dfrac{Q(y)}{N(y)}$ 的原函数。
+
+若 $P(x_0)=0$，则 $x=x_0$ 也是方程的解。
+
+若 $N(y_0)=0$，则 $y=y_0$ 也是方程的解。
+
+\paragraph*{例5} $x(y^2-1)\,dx+y(y^2-1)\,dy=0$
+
+\paragraph*{解5} 当 $x\neq \pm1$，$y\neq \pm1$ 时：
+\[
+\int \frac{x}{y^2-1}dx+\int \frac{y}{y^2-1}dy=0
+\]
+
+$$\ln|x^2-1|+\ln|y^2-1|=C\;(C\in\mathbb{R})$$
+
+通解为$(x^2-1)(y^2-1)=C,(C\neq0)$
+
+显然，$x=\pm1,y=\pm1$ 也是解($C=0$)
+
+因此通解为 $(x^2-1)(y^2-1)=C, C\text{为任意常数}。$
+
+
+
+\section*{三、齐次方程}
+
+\[
+\frac{dy}{dx}=f\!\left(\frac{y}{x}\right) \tag{3}
+\]
+
+其中 $f(u)$ 为 $u$ 的连续函数。
+
+变量替换：令 $u=\tfrac{y}{x}$，则 $y=ux,\;\dfrac{dy}{dx}=u+x\dfrac{du}{dx}$
+
+则 $u+x\dfrac{du}{dx}=f(u)$
+
+若 $f(u)-u \neq 0,\; \frac{1}{f(u)-u}du = \frac{1}{x}dx$，通解为 $G(u)=\ln x+C$
+
+原方程通解：$G\!\left(\tfrac{y}{x}\right)=\ln x+C$
+
+若 $f(u_0)=u_0$，则 $u=u_0x$ 也是解。
+
+---
+
+\paragraph*{例6} 
+\[
+\frac{dy}{dx}=\frac{y}{x}+\tan\frac{y}{x}
+\]
+
+\paragraph*{解6}  
+令 $u=\tfrac{y}{x}$，则 $u+x\dfrac{du}{dx}=u+\tan u$
+
+当 $\tan u\neq 0$ 时
+\[
+\int \frac{1}{\tan u}du=\int \frac{1}{x}dx,\quad \ln|\sin u|=\ln|x|+C
+\]
+
+通解为 $\sin \tfrac{y}{x}=C x\;(C\neq 0)$
+
+当 $\tan u=0$ 时，$\sin u=0$，也是解
+
+原方程通解为 $\sin \tfrac{y}{x}=Cx,\; C\text{为任意常数}$
+
+
+\paragraph*{Rem.} 
+
+(1) $\dfrac{dy}{dx}=f(x,y)$ 是齐次方程时满足 $f(x,y)$ 是 $x,y$ 齐次函数，此时
+\[
+\frac{dy}{dx}=f(x,y)=f(tx,ty)=f\!\left(1,\frac{y}{x}\right)=g\!\left(\frac{y}{x}\right)
+\]
+
+(2) 对 $\dfrac{dy}{dx}=\dfrac{M(x,y)}{N(x,y)}$，其中 $M(x,y)$ 和 $N(x,y)$ 都是 $x,y$ 的$m$次齐次函数，即
+\[
+M(tx,ty)=t^m M(x,y),\quad N(tx,ty)=t^m N(x,y),
+\]
+
+则方程可化为齐次方程，此时
+\[
+\frac{dy}{dx}=\frac{M(x,y)}{N(x,y)}=\frac{M(tx,ty)}{N(tx,ty)}=\frac{t^m M(x,y)}{t^m N(x,y)}=\frac{M(1,\frac{y}{x})}{N(1,\frac{y}{x})}=g\!\left(\frac{y}{x}\right)
+\]
+
+
+
+\paragraph*{例7} 
+\[
+x\frac{dy}{dx}+2\sqrt{xy}=y \quad (x<0)
+\]
+\paragraph*{解7} 
+\[
+\frac{dy}{dx}=\frac{y-2\sqrt{xy}}{x}=\frac{y}{x}+2\sqrt{\frac{y}{x}}
+\]
+
+令 $u=\frac{y}{x}$，则 $u+x\dfrac{du}{dx}=u+2\sqrt{u},\; x\dfrac{du}{dx}=2\sqrt{u}$
+
+$u\neq 0$ 时
+\[
+\frac{1}{2\sqrt{u}}du=\frac{1}{x}dx,\sqrt{u}=\ln(-x)+C
+\]
+\[
+u=(\ln(-x)+C)^2,\;\; \ln(-x)+C>0
+\]
+
+$u=0$ 时也是解
+
+原方程的通解：$y=(\ln(-x)+C)^2,\;\; \ln(-x)+C>0$  ,特解：$y=0$。
+
+
+\paragraph*{例8} 
+\[
+(x^2+y^2)\frac{dy}{dx}=2xy
+\]
+\paragraph*{解8} 
+令 $u=\frac{y}{x}$，则
+\[
+u+x\frac{du}{dx}=\frac{2u}{1+u^2}
+\]
+
+有通解 $\frac{xy}{x^2-y^2}=Cx$，特解 $y=x,\; y=-x$
+
+
+\section*{四、可化为齐次方程的方程}
+
+\[
+\frac{dy}{dx}=\frac{a_1x+b_1y+c_1}{a_2x+b_2y+c_2} \tag{4}
+\]
+
+其中 $a_1,a_2,b_1,b_2,c_1,c_2$ 为常数。
+
+若 $c_1=c_2=0$，则 $\frac{dy}{dx}=\frac{a_1x+b_1y}{a_2x+b_2y}$ 为齐次方程。
+
+若 $c_1\neq 0$ 或 $c_2\neq 0$：
+
+当 $\begin{vmatrix} a_1 & b_1\\ a_2 & b_2\end{vmatrix}=0$ 时，令 $\tfrac{a_1}{a_2}=\tfrac{b_1}{b_2}=k$，则：
+\[
+\frac{dy}{dx}=\frac{k(a_2x+b_2y)+c_1}{a_2x+b_2y+c_2}=f(a_2x+b_2y)
+\]
+
+化简后
+\[
+\frac{du}{dx}=a_2+b_2f(u)
+\]
+
+当 $\begin{vmatrix} a_1 & b_1\\ a_2 & b_2\end{vmatrix}\neq 0$ 时，
+\[
+\begin{cases}
+ a_1x+b_1y+C_1=0\\
+a_2x+b_2y+C_2=0
+\end{cases}
+\]
+
+有交点 $(\alpha,\beta)\neq (0,0)$.令
+\[
+\begin{cases}
+X=x-\alpha,\\
+Y=y-\beta,
+\end{cases}
+\quad
+\frac{dY}{dX}=\frac{a_1X+b_1Y}{a_2X+b_2Y}=g\!\left(\frac{Y}{X}\right)
+\]
+
+
+
+\paragraph*{例9}
+\[
+\frac{dy}{dx}=\frac{x-y+1}{x+y-3}
+\]
+\paragraph*{解9}
+\[
+\begin{cases}
+x-y+1=0\\
+x+y-3=0
+\end{cases}
+\;\;\Rightarrow (1,2),\;\; 令
+\begin{cases}
+X=x-1\\
+Y=y-2
+\end{cases}
+\]
+
+\[
+\frac{dY}{dX}=\frac{X-Y}{X+Y}
+\]
+
+令 $u=\tfrac{Y}{X}$，则 $u+X\dfrac{du}{dX}=\dfrac{1-u}{1+u},\;\; X\dfrac{du}{dX}=\dfrac{1-2u-u^2}{1+u}$
+
+若 $u^2+2u-1\neq 0$，则
+\[
+\int \frac{1+u}{1-2u-u^2}du=\int \frac{1}{X}dX
+\]
+
+即
+\[
+-\tfrac{1}{2}\ln|u^2+2u-1|=\ln|X|+C
+\]
+
+\[
+X^2\cdot(u^2+2u-1)=C\quad (C\neq 0)
+\]
+
+显然 $u^2+2u-1=0$ 对应的 $u=u_0$ 也是解。
+
+因此通解为 $X^2(u^2+2u-1)=C,\; C\text{为任意常数}$
+
+代回原变量：
+\[
+(y-2)^2+2(x-1)(y-2)-(x-1)^2=C
+\]
+
+\paragraph*{Rem.} 更一般方程情形：
+\[
+\frac{dy}{dx}=f\!\left(\frac{a_1x+b_1y+c_1}{a_2x+b_2y+c_2}\right)
+\]
+可类似求解。
+
+
+\paragraph*{例10}
+\[
+\frac{dy}{dx}=2(\frac{y-2}{(x+y-1)})^2
+\]
+
+\paragraph*{解10}
+\[
+\begin{cases}
+y-2=0\\
+x+y-1=0
+\end{cases}
+\;\;\Rightarrow (-1,2),\;\; 令
+\begin{cases}
+X=x+1\\
+Y=y-2
+\end{cases}
+\]
+
+\[
+\frac{dY}{dX}=\frac{2Y^2}{(X+Y)^2}
+\]
+
+令 $u=\tfrac{Y}{X}$，则 $u+X\dfrac{du}{dX}=\dfrac{2u^2}{(1+u)^2}$,\;\; 即 $X\dfrac{du}{dX}=-\frac{u+u^2}{(1+u)^2}$
+
+若 $u\neq 0$，则
+
+
+\[
+\int \frac{(1+u)^2}{u(1+u^2)}du=\int -\frac{1}{X}dX
+\]
+
+\[
+\ln|u|+2\arctan u=-\ln|X|+C
+\]
+
+通解 $y-2 = C e^{-2arctan\frac{y-2}{x+1}},\;\; C\text{为任意常数}$
+
+
+
+
+
+
+
+\paragraph*{Rem.} 
+\[
+\frac{dy}{dx}=f(ax+by+c),\quad \text{令}\; u=ax+by+c
+\]
+
+
+\[
+y f(xy)\,dx+xg(xy)\,dy=0 \quad (\;\text{令}\; u=xy\;)
+\]
+
+\[
+x^2\frac{dy}{dx}=f(xy) \quad (\;\text{令}\; u=xy\;)
+\]
+
+\[
+\frac{dy}{dx}=xf\!\left(\frac{y}{x^2}\right) \quad (\;\text{令}\; u=\frac{y}{x^2}\;)
+\]
+
+
+\section*{五、应用举例}
+
+\paragraph*{例} 聚照灯反射镜面的形状  
+要求：将点光源射出的光线，平行地反射出去，以保证聚照灯有良好的方向性。
+
+\paragraph*{解} 
+建立坐标系,设曲线 
+\[
+\begin{cases}
+y=f(x)\\
+z=0
+\end{cases}
+\]
+
+绕 $x$ 轴旋转形成曲面
+
+问题归结为求 $xOy$ 平面上曲线 $y=f(x)z$ 的方程：
+
+\[
+\frac{dy}{dx}=\tan\alpha_2=-\frac{y}{x+\sqrt{x^2+y^2}}\quad (\text{齐次方程})
+\]
+
+亦即
+\[
+\frac{dx}{dy}=\frac{x+\sqrt{x^2+y^2}}{y}=\frac{x}{y}+\sqrt{(\frac{x}{y})^2+1}\cdot\operatorname{sgn}(y)
+\]
+
+令 $u=\frac{x}{y}$，则 $x=uy,\;\; u+y\frac{du}{dy}=u+\operatorname{sgn}(y)\sqrt{u^2+1}$  
+
+\[
+\frac{du}{\sqrt{u^2+1}}=\operatorname{sgn}(y)\cdot \frac{dy}{y}
+\]
+
+两边积分：
+\[
+\int \frac{du}{\sqrt{u^2+1}}=\int \frac{dy}{y}
+\]
+
+\[
+\ln(u+\sqrt{u^2+1})+C=\ln y,\quad C\cdot (u+\sqrt{u^2+1})=y
+\]
+
+代入 $u=\tfrac{x}{y}$，有
+\[
+C \cdot (x+\sqrt{x^2+y^2})=y^2, \ x^2+y^2 = \frac{y^4}{C^2}+x^2-2\frac{xy^2}{C}
+\]
+
+即
+\[
+1=\frac{y^2}{C^2}-\frac{2x}{C}, \ y^2=c^2+2Cx , \ C\text{为任意常数}
+\]
+
+
+反射镜面为旋转抛物面：
+\[
+y^2+z^2=C^2+2Cx
+\]
+
+
+
+\mysection{§2.2 线性微分方程与常数变易法}
+
+\section*{一、一阶线性常微分方程}
+
+\subsubsection*{1. 形式}
+\[
+\frac{dy}{dx}=P(x)\,y+Q(x) \tag{1}
+\]
+其中 $P(x),Q(x)$ 都是连续函数。
+
+\paragraph*{Rem.}  
+(i) 若方程为 $a(x)\dfrac{dy}{dx}+b(x)y+c(x)=0$，  
+在 $a(x)\neq 0$ 的区间上有：
+\[
+\frac{dy}{dx}+\frac{b(x)}{a(x)}y+\frac{c(x)}{a(x)}=0
+\]  
+
+(ii) 若称 $Q(x)\equiv 0$，则
+$
+\frac{dy}{dx}=P(x)y (2)
+$
+称为齐次方程；反之，$Q(x)\not\equiv 0$，称为非齐次方程。
+
+
+\subsubsection*{2. 常数变易法}  
+
+先求齐次方程 (2) 的通解：
+\[
+y=c\,e^{\int P(x)\,dx},\quad c\text{为任意常数}
+\]
+
+考虑 $y=c(x)\,e^{\int P(x)\,dx}$ 的导数：
+\[
+y'(x)=c'(x)\,e^{\int P(x)\,dx}+c(x)P(x)\,e^{\int P(x)\,dx}
+\]
+
+代入非齐次方程 (1)，得：
+\[
+Q(x)=c'(x)\,e^{\int P(x)\,dx},\quad 
+c'(x)=Q(x)\,e^{-\int P(x)\,dx}
+\]
+
+积分得：
+\[
+c(x)=\int Q(x)\,e^{-\int P(x)\,dx}\,dx+C
+\]
+
+因此非齐次方程通解为：
+\[
+y(x)=\left(\int Q(x)\,e^{-\int P(x)\,dx}\,dx+C\right)e^{\int P(x)\,dx}
+\]
+
+\paragraph*{Rem.} 线性非齐次方程通解的结构：
+\[
+y(x)=C\,e^{\int p(x)\,dx}\text{(齐次方程通解)}+\left(\int q(x)\,e^{-\int p(x)\,dx}\,dx\right)e^{\int p(x)\,dx}\text{(非齐次方程的一个特解)}
+\]
+
+
+
+
+\paragraph*{例1} 求解方程 $(x+1)\dfrac{dy}{dx}-ny=e^x(x+1)^{n+1},\; n\text{为常数}$。
+
+\paragraph*{解1} 
+\[
+\frac{dy}{dx}-\frac{n}{x+1}y=e^x(x+1)^{n}
+\]
+
+(i) 先求齐次方程的通解：
+\[
+\frac{dy}{dx}=\frac{n}{x+1}y
+\;\;\Rightarrow\;\;
+\int \frac{dy}{y}=\int \frac{ndx}{x+1},\;\;\Rightarrow\;\;
+y=C(x+1)^{n}
+\]
+
+(ii) 非齐次方程的通解：
+
+设$y=c(x)(x+1)^n$是方程的通解
+
+\[c'(x)\cdot(x+1)^n=e^x\cdot (x+1)^n,c(x)=e^x+C\]
+
+非齐次方程通解为：
+\[
+y=(e^x+C)(x+1)^n,\quad C\text{为任意常数}
+\]
+
+
+
+
+\paragraph*{例2} 
+\[
+\frac{dy}{dx}=\frac{y}{2x-y^2}
+\]
+\paragraph*{解2} 
+\[
+x=(-\ln(y)+C)\,y^2,\quad C\text{为任意常数}
+\]
+
+$y=0$ 也是解。
+
+
+\subsubsection*{3. 积分因子法}
+
+\[
+\frac{dy}{dx}-P(x)\,y=Q(x)
+\]
+
+考虑
+\[
+\frac{d}{dx}(y(x)\,z(x))=\frac{d}{dx}y(x)\cdot z(x)+\frac{d}{dx}z(x)\cdot y(x)
+\]
+
+有
+\[
+\frac{d}{dx}\bigl(e^{-\int P(x)\,dx}\,y(x)\bigr)
+=\frac{dy}{dx}\,e^{-\int P(x)\,dx}-p(x)\,e^{-\int P(x)\,dx}\,y=e^{-\int P(x)\,dx}\left(\frac{dy}{dx}-P(x)\,y\right)
+\]
+
+
+上式两边同乘 $e^{-\int P(x)\,dx}$：
+\[
+e^{-\int P(x)\,dx}\left(\frac{dy}{dx}-P(x)\,y\right)=e^{-\int P(x)\,dx}\,q(x)
+\]
+
+即
+\[
+e^{-\int P(x)\,dx}\,y=\int Q(x)\,e^{-\int P(x)\,dx}\,dx+C
+\]
+
+因此
+\[
+y=\left(\int q(x)\,e^{-\int p(x)\,dx}\,dx+C\right)e^{\int p(x)\,dx},\quad C\text{为任意常数}
+\]
+
+
+\subsubsection*{4. 一阶线性微分方程的初值问题}
+
+\[
+\begin{cases}
+\dfrac{dy}{dx}=P(x)\,y+Q(x),\\
+y(x_0)=y_0
+\end{cases}
+\]
+
+(1) 先求通解，再代入 $y(x_0)=y_0$，求出 $C$。
+
+(2) 
+\[
+y=C\,e^{\int_{x_0}^x P(t)\,dt}
++\int_{x_0}^x Q(s)\,e^{-\int_s^x P(t)\,dt}\,ds\cdot e^{\int_{x_0}^x P(t)\,dt}
+\]
+
+可求得 $C=y_0$：
+\[
+y=y_0\,e^{\int_{x_0}^x P(t)\,dt}
++\int_{x_0}^x Q(s)\,e^{-\int_s^x P(t)\,dt}\,ds\cdot e^{\int_{x_0}^x P(t)\,dt}
+\]
+
+
+\paragraph*{例3} 函数 $f(t)$ 在 $[0,+\infty)$ 上连续有界，证明方程
+\[
+\frac{dx}{dt}+x=f(t) \tag{$\ast$}
+\]
+所有解均在 $[0,+\infty)$ 上有界。
+
+\paragraph*{解3 \proof }  
+
+设 $y(t)$ 是方程 $(\ast)$ 上任意给定的解，令 $x(0)=x_0$，  
+则 $x(t)$ 一定满足
+\[
+x(t)=x_0 e^{\int_0^t (-1)\,dt}+\int_0^t f(s)e^{-\int_0^s (-1)\,dt}\,ds \cdot e^{-\int_0^t (-1)\,dt}
+= x_0 e^{-t}+\int_0^t f(s)e^s\,ds\cdot e^{-t}
+\]
+
+显然 $\exists M>0$ s.t. $|f(t)|\leq M,\;\forall t\in[0,+\infty)$。  
+
+从而
+\begin{align}
+从而\ |x(t)| 
+&= \bigl|x_0 e^{-t}+\int_0^t f(s)e^s ds \cdot e^{-t}\bigr| \\
+&\leq |x_0 e^{-t}|+\Bigl|\int_0^t f(s)e^s ds \cdot e^{-t}\Bigr| \\
+&\leq |x_0|+e^{-t}\cdot \int_0^t |f(s)|e^s ds \\
+&\leq |x_0|+e^{-t}\cdot M\int_0^t e^s ds \\
+&= |x_0|+e^{-t}\cdot (e^t-1)\cdot M \\
+&\leq |x_0|+M
+\end{align}
+
+因此 $x(t)$ 在 $[0,+\infty)$ 上有界。
+
+
+\subsubsection*{5. 线性方程的性质}
+
+(1) 齐次线性微分方程的解的线性组合仍是齐次方程的解。  
+齐次线性微分方程的解与非齐次线性微分方程的解之和仍是非齐次线性微分方程的解；非齐次线性微分方程两个任意解的差仍是解。  
+
+(2) 齐次线性微分方程的通解与非齐次线性微分方程的特解之和构成非齐次线性微分方程的通解。  
+
+(3) 线性微分方程的初值问题的解是存在唯一的。  
+
+\paragraph*{例3}
+\[
+\frac{dy}{dx}=6\frac{y}{x}-xy^2
+\]
+
+\paragraph*{解3}
+\[
+\frac{1}{y^2}\frac{dy}{dx}-6\frac{1}{x}\cdot \frac{1}{y}=-x,\quad
+\frac{d(\tfrac{1}{y})}{dx}+\frac{6}{x}\cdot \frac{1}{y}=x
+\]
+
+令 $z=\frac{1}{y}$，有：
+
+\[
+z=(\frac{1}{8}x^8+C)\cdot x^{-6}
+\]
+
+代回 $y$ 有：
+\[
+y=\frac{1}{\tfrac{1}{8}x^8+C\cdot x^{-6}}
+\]
+
+原方程 $y=0$ 也是解。
+
+
+
+
+\section*{二、Bernoulli 方程}
+\subsubsection*{1. 形式：}
+
+\begin{equation}
+\frac{dy}{dx} = P(x)y + Q(x)y^n \quad (n \neq 0,1) \tag{3}
+\end{equation}
+
+其中 $P(x), Q(x)$ 为连续函数
+
+\subsubsection*{2. 解法：}
+$y \neq 0$ 时
+\begin{equation}
+y^{-n}\frac{dy}{dx} = P(x)y^{1-n} + Q(x) \tag{4}
+\end{equation}
+
+\[
+\frac{d(y^{1-n})}{dx} = (1-n)P(x)y^{1-n} + (1-n)Q(x)
+\]
+
+令 
+
+\[
+z = y^{1-n}, \quad \frac{dz}{dx} = (1-n)P(x)z + (1-n)Q(x) \tag{5}
+\]
+
+设 (5) 式通解为 $z = \varphi(x,c)$
+
+则 (3) 式通解为 $y^{1-n} = \varphi(x,c), \quad c$ 为任意常数
+
+\paragraph*{Rem.} 
+\begin{itemize}
+\item 方程 (3) 中 $n = 0,1$ 时为线性方程；  
+\item 方程 (3) 中 $n>0$ 时有奇解 $\Rightarrow y=0$。
+\end{itemize}
+
+
+
+\paragraph*{例4} 
+\[
+\frac{dy}{dx} = \frac{1}{xy + x^3y^3}
+\]
+
+\paragraph*{解4} 
+\[
+\frac{dy}{dx} = yx + y^3x^3, \quad x^{-3}\frac{dy}{dx} = yx^{-2} + y^3
+\]
+
+令 $z = x^{-2}, \quad \frac{dz}{dx} = -2yz-2y^3$
+
+齐次方程：
+\[
+\frac{dz}{dx} = -2yz, \quad \text{有通解 } z = Ce^{-y^2}
+\]
+
+非齐次方程：
+\[
+z = C(y)e^{-y^2}, \quad C'(y)e^{-y^2} = -2y^3
+\]
+
+\[
+C(y) = \int -2y^3 e^{y^2} dy = -\int te^t dt = -(t-1)e^t + c= -(y^2-1)e^{y^2} + c
+\]
+
+通解：
+\[
+z = [-(y^2-1)e^{y^2} + c] e^{-y^2} = -(y^2-1) + Ce^{-y^2}
+\]
+
+原方程通解为
+\[
+x^{-2} = c e^{-y^2} - y^2 + 1
+\]
+
+
+
+\paragraph*{例5} 
+\[
+\frac{dy}{dx} = \frac{e^y + 3x}{x^2}
+\]
+
+\paragraph*{解5} 
+令 $u = e^y, \quad \frac{du}{dx} = e^y\frac{dy}{dx} $
+
+\[
+\frac{1}{u}\frac{du}{dx} = \frac{1}{x^2}u+\frac{3}{x} \ \ \text{即}\frac{du}{dx}=\frac{u^2}{x^2}+\frac{3u}{x},\frac{1}{u}=Cx^{-3}-\frac{1}{2}x^{-1}
+\]
+
+通解为
+\[
+\frac{1}{e^{y}} = C x^{-3} - \frac{1}{2}x^{-1}, \quad \text{C 为任意常数}
+\]
+
+
+
+\section*{三、Riccati 方程}
+
+\subsection*{1. 形式：}
+\begin{equation}
+\frac{dy}{dx} = P(x)y^2 + Q(x)y + R(x) \tag{6}
+\end{equation}
+
+其中 $P(x), Q(x), R(x)$ 为连续函数。
+
+\paragraph*{Rem.}
+\begin{itemize}
+  \item 1841 年，Liouville 证明 (6) 式一般情况下不能表示为初等函数解；
+  \item 若已知 (6) 的一个特解，则可求出通解。
+\end{itemize} 
+
+
+\subsection*{2. 解法：}
+设 (6) 有一特解 $\tilde{y}(x)$，设 $y(x) = z + \tilde{y}(x)$ 是 (6) 的解，  
+则代入 (6) 有
+\[
+\frac{dz}{dx} + \frac{d\tilde{y}}{dx} = P(x)(z^2 + 2z\tilde{y} + \tilde{y}^2) + Q(x)(z + \tilde{y}) + R(x)
+\]
+
+即
+\[
+\frac{dz}{dx} + \frac{dtilde{y}}{dx} = P(x)z^2 + (2P(x)\bar{y} + Q(x))z + P(x)\bar{y}^2 + Q(x)\bar{y} + R(x)
+\]
+
+由 $\tilde{y}$ 是 (6) 的特解，  
+\[
+\frac{dz}{dx} = P(x)z^2 + (2P(x)\tilde{y}+Q(x))z
+\]
+
+为 Bernoulli 方程。
+
+
+因此原方程通解为 $y = \varphi(x,c) + tilde{y}$。
+
+
+\paragraph*{例6} 
+\[
+y' = y^2 - x^2 + 1
+\]
+
+\paragraph*{解6} 
+显然，$y=x$ 是一个特解。  
+
+令 $y = x+z(x)$，则
+\[
+\frac{dz}{dx} = z^2 + 2xz
+\]
+
+通解为
+\[
+z = \left(-\int e^{-x^2}dx + C\right)e^{-x^2}
+\]
+
+原方程通解为
+\[
+y = x + e^{x^2}\cdot \left(-\int e^{-x^2}dx + C\right)^{-1}, \quad C\text{ 为任意常数}
+\]
+
+
+
+\mysection{§2.3 全微分方程和积分因子}
+
+
+
+\section*{一、全微分方程}
+
+(1) $d(xy) = x\,dy + y\,dx = 0$
+
+\[
+x\,dy + y\,dx = 0 \;\Rightarrow\; d(xy) = 0 \;\Rightarrow\; xy = C
+\]
+
+(2) $d\!\left(\frac{x}{y}\right) = \frac{y\,dx - x\,dy}{y^2} = 0$
+
+\[
+y\,dx - x\,dy = 0 \;\Rightarrow\; d\!\left(\frac{x}{y}\right)=0 \;\Rightarrow\; \frac{x}{y} = C
+\]
+
+(3) 设 $Oxy$ 平面存在力场，$\vec{F}(x,y) = M(x,y)\,\vec{i} + N(x,y)\,\vec{j}$，  
+求曲线 $L$ 使与力场处处垂直。
+
+\textbf{解答：} 设曲线 $L$: $y = y(x)$，  
+则 $L$ 在 $Q$ 点处的斜率为
+\[
+\frac{dy}{dx}
+\]
+
+向量切线方向在 $Q$ 点的斜率 $\tan \theta = \frac{N(x,y)}{M(x,y)}$
+\[
+\frac{dy}{dx} = -\frac{1}{\tan \theta} = -\frac{M(x,y)}{N(x,y)} \quad \Rightarrow \quad M(x,y)\,dx + N(x,y)\,dy = 0. \tag{$\ast$}
+\]
+
+若 $\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}$，则 (1) 式为全微分方程，  
+即 $\exists u(x,y)$ s.t.
+\[
+M(x,y) = \frac{\partial u}{\partial x}, \quad N(x,y) = \frac{\partial u}{\partial y}
+\]
+
+即方程化为
+\[
+du = \frac{\partial u}{\partial x} dx + \frac{\partial u}{\partial y} dy
+\]
+
+通解为
+\[
+u(x,y) = C, \quad C \text{ 为任意常数}.
+\]
+
+
+\subsection*{1. 定义}  
+设一阶拟线性微分方程的微分形式为
+\[
+M(x,y)\,dx + N(x,y)\,dy = 0 \tag{$\ast$}
+\]
+
+其中 $M(x,y), N(x,y)$ 在区域 $G$ 内连续且有一阶连续偏导数。  
+
+若存在可微函数 $u(x,y)$ s.t.
+\[
+du(x,y) = M(x,y)\,dx + N(x,y)\,dy
+\]
+
+即 $\frac{\partial u}{\partial x} = M(x,y), \quad \frac{\partial u}{\partial y} = N(x,y)$，  
+则称方程 ($\ast$) 为全微分方程，  
+或全微分形式。$u(x,y)$ 称为 $M(x,y)dx + N(x,y)dy$ 的一个原函数。
+
+
+\paragraph*{例1} 
+\begin{itemize}
+\item $x\,dx + y\,dy = 0  \implies  d\!\left(\tfrac{1}{2}x^2 + \tfrac{1}{2}y^2\right) = 0$
+
+\item $y\,dx - x\,dy = 0 \implies d(\frac{x}{y})=0$ 
+\end{itemize}
+
+
+
+
+\paragraph*{Thm.} 
+设 $M(x,y), N(x,y)$ 在某单连通区域 $G$ 内连续可微，则方程
+\[
+M(x,y)dx + N(y,y)dy = 0 \tag{$\ast$}
+\]
+
+是全微分方程 
+\[
+\;\;\;\Leftrightarrow \frac{\partial M}{\partial x} = \frac{\partial N}{\partial b},\; \forall (b,y)\in G \tag{$\ast\ast$}
+\]
+
+且当 $(\ast\ast)$ 成立时，原函数 $u(x,y)$ 可取为
+\[
+u(x,y) = \int_{(x_0,y_0)}^{(x,y)} M(x,y)dx + N(x,y)dy= \int_{x_0}^x M(x,y_0)\,dx + \int_{y_0}^y N(x,y)\,dy
+\]
+
+其中 $(x_0,y_0)\in G$ 是任意取定一点。
+
+或：
+\[
+u(x,y) = \int_{y_0}^y N(x_0,y)\,dy + \int_{x_0}^x M(x,y)\,dx
+\]
+
+
+\paragraph*{\proof}  
+
+$\Rightarrow$ $(\ast)$ 是全微分方程，$\exists u(x,y)$ s.t. $M(x,y)=\frac{\partial u}{\partial x}, N(x,y)=\frac{\partial u}{\partial y}$。  
+
+由 $M,N \in C',\;\; \frac{\partial M}{\partial y} = \frac{\partial}{\partial y}\!\left(\frac{\partial u}{\partial x}\right) = \frac{\partial}{\partial x}\!\left(\frac{\partial u}{\partial y}\right) = \frac{\partial N}{\partial x}$  
+
+
+$\Leftarrow$ 若 $\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}$，  
+设法证 $\exists u(x,y)$ s.t. $\frac{\partial u}{\partial x} = M(x,y), \frac{\partial u}{\partial y} = N(x,y)$。  
+
+对 $\frac{\partial u}{\partial x} = M(b,y)$ 两边关于 $x$ 积分，得：
+\[
+\int_{x_0}^x \frac{\partial u}{\partial x}\,dx = \int_{x_0}^x M(x,y)\,dx
+\]
+
+即
+\[
+u(x,y) - u(x_0,y) = \int_{x_0}^x M(x,y)\,dx
+\]
+
+\[
+u(x,y) = \int_{x_0}^x M(x,y)\,dx + \varphi(y), \quad 其中 \;\;\varphi(y)=u(x_0,y)
+\]
+
+
+两边关于 $y$ 求导：
+\[
+\frac{\partial u}{\partial y} = \int_{x_0}^x \frac{\partial M}{\partial y}(x,y)\,dx + \varphi'(y) = N(x,y)
+\]
+
+由 $\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}$：
+\[
+\int_{x_0}^x \frac{\partial M}{\partial y}(x,y)\,dx + \varphi'(y) = \int_{x_0}^x \frac{\partial N}{\partial x}(x,y)\,dx + \varphi'(y) = N(x,y)
+\]
+
+\[
+N(x,y) - N(x_0,y) + \varphi'(y) = N(x,y) \;\;\Rightarrow\;\; \varphi'(y) = N(x_0,y)
+\]
+
+因此
+\[
+\varphi(y) - \varphi(y_0) = \int_{y_0}^y N(x_0,y)\,dy
+\]
+
+令 $\varphi(y_0)=0$，得
+\[
+\varphi(y) = \int_{y_0}^y N(b_0,y)\,dy
+\]
+
+于是
+\[
+u(x,y) = \int_{x_0}^x M(x,y)\,dx + \int_{y_0}^y N(x_0,y)\,dy
+\]
+
+因此 $(\ast)$ 式为全微分方程。
+
+\paragraph*{Rem.} 
+\begin{itemize} 
+\item 若 $u(x,y)$ 是 $Mdx+Ndy$ 的一个原函数，则 $u(x,y)+C$ 也是解；  
+\item $\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x} \;\Rightarrow\; Mdx+Ndy=0$ 是全微分方程。
+\item 若 $\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}$，则 $Mdx+Ndy$ 的一个原函数为
+$
+u(x,y) = \int_{x_0}^x M(x,y)\,dx + \int_{y_0}^y N(x_0,y)\,dy
+$
+其中 $(x_0,y_0)$ 是 $G$ 内任一点。
+\end{itemize}
+
+
+\paragraph*{例2} 
+求解方程 $xy\,dx + (\frac{x^2}{2}+\frac{1}{y})\,dy = 0$
+
+\paragraph*{解2} 
+$M = xy,\; N = \frac{x^2}{2}+\frac{1}{y}$
+
+\[
+\frac{\partial M}{\partial y} = x,\quad \frac{\partial N}{\partial x} = x
+\]
+
+\[
+u(x,y) = \int_{(0,1)}^{(x,y)} xy\,dx + (\frac{x^2}{2}+\frac{1}{y})\,dy
+= \int_{0}^x xdx + \int_{1}^y (\frac{x^2}{2}+\frac{1}{y})\,dy
+= \frac{1}{2}x^2y+\ln|y|
+\]
+
+通解：$\frac{1}{2}x^2y + \ln|y|= C,\; C \text{ 为任意常数}$
+
+
+\paragraph*{另解} 
+$xy\,dx+(\frac{x^2}{2}+\frac{1}{y})\,dy=0$
+
+\[
+xy\,dx+\frac{x^2}{2}\,dy = d\!\left(\tfrac{1}{2}x^2y\right),\ \ \frac{1}{y}dy=d(\ln|y|)
+\]
+
+因此有通解 $\frac{1}{2}x^2y + \ln|y|= C,\; C \text{ 为任意常数}$
+
+
+\paragraph*{例3} 
+求解方程 $(3b^2+6by)\,db+(4y^3+6b^2y)\,dy=0$
+
+\paragraph*{解3}  
+$M=3x^2+6xy^2,\; N=4y^3+6x^2y$
+
+\[
+\frac{\partial M}{\partial y} = 12xy,\quad \frac{\partial N}{\partial x} = 12xy
+\]
+
+\[
+u(x,y) = \int_{0}^x 3x^2dx + \int_{0}^y (4y^3+6x^2y)\,dy
+= x^3+y^4+3x^2x^2
+\]
+
+
+所以方程有通解
+\[
+x^3+y^4+3x^2y^2 = C,\quad C \text{ 为任意常数}.
+\]
+
+
+
+\subsection*{2.初值问题的解}
+
+\[
+\begin{cases}
+M(x,y)\,db+N(x,y)\,dy=0, \\
+y(x_0)=y_0
+\end{cases}
+\]
+
+通解
+\[
+u(x,y)=\int_{x_0}^x M(x,y)\,dx+\int_{y_0}^y N(x_0,y)\,dy+C
+\]
+
+特解：$C=0$
+
+
+
+\subsection*{3. 全微分方程的解法}
+
+(1) 公式法 \quad (2) 分项组合法 \quad (3) 积分法  
+
+
+\paragraph*{例4}  \quad $3y\,dx+(\frac{x^2}{2}+\frac{1}{y})\,dy=0$
+
+\paragraph*{解4：积分法}
+\[
+\frac{\partial u}{\partial x}=xy,\quad \frac{\partial u}{\partial y}=\frac{x^2}{2}+\frac{1}{y}
+\]
+
+关于$x$的积分为：
+\[
+u= \frac{1}{2}x^2y+\varphi(y)
+\]
+
+对上式关于 $y$ 求导：
+\[
+\frac{\partial u}{\partial y}=\frac{1}{2}x^2+\varphi'(y)=\frac{x^2}{2}+\frac{1}{y}
+\]
+
+因此 $\varphi(y)=\ln|y|+C,\ u=\frac{1}{2}x^2y+\ln|y|$
+
+
+通解：
+\[
+\frac{1}{2}x^2y+\ln|y|=C
+\]
+
+\paragraph*{Rem.分项组合法：} 根据常见的全微分公式  
+
+
+\paragraph*{例5} \quad $\dfrac{y\,dx-x\,dy}{x^2+y^2}=0$
+
+\paragraph*{解5}  
+\[
+\frac{\partial M}{\partial y}
+=\frac{\partial}{\partial y}\left(\frac{y}{x^2+y^2}\right)
+=\frac{x^2-y^2}{(x^2+y^2)^2}=\frac{\partial N}{\partial x }
+\]
+
+\[
+d(\arctan \frac{x}{y})=(\frac{1}{1+(\frac{x}{y})^2}\cdot\frac{1}{y})dx+(\frac{1}{1+(\frac{x}{y})^2}\cdot (-\frac{x}{y^2}))dy=\frac{ydx-xdy}{x^2+y^2}
+\]
+
+因此通解：
+\[
+\arctan\frac{x}{y}=C,\quad C\text{ 为任意常数.}
+\]
+
+
+考虑方程 $y\,dx-x\,dy=0$  
+
+方程两边同乘 $\frac{1}{x^2+y^2}$ 有
+$
+\frac{y\,dx-x\,dy}{x^2+y^2}=0
+$
+
+方程两边同乘 $\frac{1}{y^2}$ 有
+$
+\frac{y\,dx-x\,dy}{y^2}=0
+$
+
+\paragraph*{Rem.} 积分因子： $\frac{1}{x^2+y^2}$ 与 $\frac{1}{y^2}$ 不唯一
+
+\section*{二、积分因子}
+
+\subsection*{1. 定义}  
+
+对于微分方程 
+\[
+M(x,y)\,dx + N(x,y)\,dy = 0 \tag{$\ast$}
+\]
+
+若方程 $(\ast)$ 不是全微分方程，但存在一个连续可微函数 $\mu=\mu(x,y)$，  
+s.t.
+\[
+\mu(x,y)M(x,y)\,db + \mu(x,y)N(x,y)\,dy = 0 \tag{$\ast\ast$}
+\]
+
+为全微分方程，则 $\exists \, v = v(x,y)$ s.t.
+\[
+dv(x,y) = \mu(x,y)M(x,y)\,dx + \mu(x,y)N(x,y)\,dy
+\]
+
+则称$\mu(x,y)$为方程$(\ast)$的一个积分因子
+
+
+\paragraph*{Rem.} 
+(i) 可以证明，$(\ast)$ 式与 $(\ast\ast)$ 式为同解方程。  
+(ii) $\mu(x,y)$ 为积分因子的充要条件。  
+
+
+\paragraph*{Thm.1} 
+若 $M(x,y), N(x,y), \mu(x,y)$ 均连续可微，则 $\mu(x,y)$ 为 $(\ast)$ 的积分因子  
+$\Longleftrightarrow N\cdot \frac{\partial \mu}{\partial x} - M\cdot \frac{\partial \mu}{\partial y} = \left(\frac{\partial M}{\partial y} - \frac{\partial N}{\partial x}\right)\mu$  
+
+
+
+\paragraph*{Thm.2} 
+设 $M(x,y), N(x,y), \varphi(x,y)$ 在区域 $G$ 内连续可微，则方程 $(\ast)$ 有形如 $\mu = \mu[\varphi(x,y)]$ 的积分因子  
+$\Longleftrightarrow$  
+\[
+\frac{\frac{\partial M}{\partial y} -  \frac{\partial \varphi}{\partial x}}{N\frac{\partial \varphi}{\partial y} - M\frac{\partial \varphi}{\partial y}} 
+\]
+
+仅是 $\varphi$ 的函数，记为 $f(\varphi)$。  则 $\mu = e^{\int f(\varphi)\,d\varphi} = e^{G(\varphi)}$ 是积分因子。  
+
+\paragraph*{\proof}  
+
+$\Rightarrow$ 若 $(\ast)$ 有积分因子 $\mu$，且 $\mu=\mu[\varphi(x,y)]$，则：  
+\[
+\frac{d\mu}{d\varphi}\left(N\frac{\partial \varphi}{\partial x} - M\frac{\partial \varphi}{\partial y}\right)
+= \left(\frac{\partial M}{\partial y} - \frac{\partial N}{\partial x}\right)\mu
+\]
+
+即
+\[
+\frac{d\mu}{\mu} = \frac{\frac{\partial M}{\partial y}-\frac{\partial N}{\partial x}}{N\frac{\partial \varphi}{\partial x} - M\frac{\partial \varphi}{\partial y}}\,d\varphi
+= f(\varphi)\,d\varphi
+\Rightarrow \mu = e^{\int f(\varphi)\,d\varphi} = e^{G(\varphi)}
+\]
+
+
+
+$\Leftarrow$ 若 
+$
+\frac{\frac{\partial M}{\partial y}-\frac{\partial N}{\partial x}}{N\frac{\partial \varphi}{\partial x} - M\frac{\partial \varphi}{\partial y}}
+$
+仅关于 $\varphi$，  往证 $\mu = e^{G(\varphi)}$ 是方程的解  
+
+\[
+N\frac{\partial \mu}{\partial x} - M\frac{\partial \mu}{\partial y}
+= (N\frac{\partial \varphi}{\partial x} - M\frac{\partial \varphi}{\partial y}) e^{G(\varphi)} f(\varphi)
+= \left(\frac{\partial M}{\partial y} - \frac{\partial N}{\partial x}\right)\mu
+\]
+
+因此 $\mu = e^{G(\varphi)}$ 是积分因子。
+
+
+
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{2} % 调整行高
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{类型} & \textbf{条件} & \textbf{积分因子} \\
+\hline
+$\varphi(x,y)=b,\;\mu(x)=x$ &
+$\dfrac{\tfrac{\partial M}{\partial y}-\tfrac{\partial N}{\partial x}}{N} = f(x)$ &
+$e^{\int f(x)\,dx}$ \\
+\hline
+$\varphi(x,y)=y,\;\mu(y)=y$ &
+$\dfrac{\tfrac{\partial M}{\partial y}-\tfrac{\partial N}{\partial x}}{-M} = f(y)$ &
+$e^{\int f(y)\,dy}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+
+
+\paragraph*{例6}
+求解方程 $(y^2-3xy+1)\,dx+(xy-x^2)\,dy=0$
+
+\paragraph*{解6}
+\[
+M = y^2-3xy+1, \quad N = xy-x^2
+\]
+
+\[
+\frac{\partial M}{\partial y} = 2y-3x, \quad \frac{\partial N}{\partial x} = y - 2x
+\]
+
+\[
+\frac{\partial M}{\partial y}-\frac{\partial N}{\partial x} = y-x
+\]
+
+\[
+\frac{\tfrac{\partial M}{\partial y}-\tfrac{\partial N}{\partial x}}{N} 
+= \frac{1}{x}
+\]
+
+仅是 $x$ 的函数。  
+
+积分因子：
+\[
+\mu = e^{\int \frac{1}{x}dx} = x
+\]
+
+方程两边同乘以 $x$：
+\[
+(xy^2-3x^2y+x)\,dx + (x^2y-x^3)\,dy=0
+\]
+
+\[
+d\!\left(\tfrac{1}{2}x^2y^2 - x^3y + \frac{1}{2}x^2\right) = 0
+\]
+
+通解：
+\[
+\tfrac{1}{2}x^2y^2 - x^3y + \frac{1}{2}x^2 = C
+\]
+
+
+\paragraph*{例7}
+求解方程 $(xy+y^2)\,dx+(xy+y+1)\,dy=0$
+
+\paragraph*{解7} 
+
+\[
+\frac{\partial M}{\partial y}=x+2y, \quad \frac{\partial N}{\partial x}=y
+\]
+
+\[
+\frac{\tfrac{\partial M}{\partial y}-\tfrac{\partial N}{\partial x}}{-M} 
+= -\frac{1}{y}，\text{仅是y的函数}
+\]
+
+积分因子：  
+\[
+\mu = e^{\int -\frac{1}{y} \,dy}=\frac{1}{y}
+\]
+
+
+当 $y\neq 0$ 时：
+\[
+(x+y)\,dx+(x+\frac{1}{y}+1)\,dy=0
+\]
+
+\[
+d\!\left(\tfrac{1}{2}x^2+xy+y+\ln|y|\right)=0
+\]
+
+因此通解：
+\[
+\tfrac{3}{2}x^2+xy+y+\ln|y|=C
+\]
+
+当 $y=0$ 时也是解。
+
+
+\paragraph*{例8} 
+求解方程 $(y^2+2x^2y)\,dx+(xy+x^3)\,dy=0$
+
+\paragraph*{解8}  
+
+\[
+\frac{\partial M}{\partial y} = 2y+2x^2, \quad \frac{\partial N}{\partial x} = y+3x^2
+\]
+
+\[
+\frac{\partial M}{\partial y}-\frac{\partial N}{\partial x} = y-x^2
+\]
+
+设方程有积分因子 $\mu=\mu(x^\alpha y^\beta)$  
+
+\[
+\frac{\frac{\partial M}{\partial y}-\frac{\partial N}{\partial x}}{\alpha \tfrac{N}{x}-\beta \tfrac{M}{y}}\cdot \frac{1}{x^\alpha y^\beta}
+= \frac{y-x^2}{\alpha (y+x^2)-\beta (y+2x^2)}\cdot \frac{1}{x^\alpha y^\beta}
+\]
+  
+令
+\[
+\begin{cases}
+\alpha-\beta = 1, \\
+\alpha-2\beta=-1
+\end{cases}
+\quad \Rightarrow \quad \alpha=3,\; \beta=2
+\]
+
+
+因此积分因子：
+\[
+\mu = e^{\int \tfrac{1}{x^3y^2}\,dy} = x^3y^2
+\]
+
+将方程两边同乘 $\mu=x^3y^2$：
+\[
+(x^3y^4+2x^5y^3)\,dx + (x^4y^3+x^6y^2)\,dy = 0
+\]
+
+这是一个全微分方程：  
+\[
+d\!\left(\frac{1}{4}x^4y^4+\tfrac{1}{3}x^6y^3\right)=0
+\]
+
+通解：
+\[
+\frac{1}{4}x^4y^4 + \tfrac{1}{3}x^6y^3 = C
+\]
+
+
+
+
+
+
+\mysection{§2.4 一阶隐式微分方程}
+
+\section*{一、一阶隐式方程}
+
+\[
+F(x, y, y') = 0 \tag{$\ast$}
+\]
+
+\subsection*{1. 若可化为 $y' = f(x, y)$}根据显式方程求解即可。
+
+\paragraph*{例1} 求解方程 $y'^2 - (x + y)y' + xy = 0$
+
+\paragraph*{解1} 
+\[
+(y' - x)(y' - y) = 0
+\]
+所以通解为 $y = \frac{1}{2}x^2 + C$ 或 $y = Ce^x$
+
+
+\subsection*{2. 可解出$y$的方程：$y = f(x, y')$  ,其中 $f \in C^{(1)}$}
+
+令 $y' = p$，则 $y = f(x, p) $
+
+两边关于 $x$ 求导：
+\[
+p = \frac{\partial f}{\partial x} + \frac{\partial f}{\partial p}\frac{dp}{dx}
+\]
+
+即
+\[
+\frac{dp}{dx} = \frac{p - \frac{\partial f}{\partial p}}{\frac{\partial f}{\partial x}} = F(x, p)
+\]
+
+（关于 $x,p$ 的一阶显式微分方程）
+
+
+① 若 $p = \varphi(x, c)$，代入有 $y = f[x, \varphi(x, c)]$  
+
+② 若 $x = \psi (p, c)$，代入有
+\[
+\begin{cases}
+x = \psi (p, c), \\
+y = f(x, p)
+\end{cases}
+\]
+其中 $p$ 为参数，$c$ 为任意常数。  
+
+③ 若 $\Phi(x, p, c) = 0$，代入有
+\[
+\begin{cases}
+\Phi(x, p, c) = 0, \\
+y = f(x, p)
+\end{cases}
+\]
+其中 $p$ 为参数，$c$ 为任意常数。
+
+
+\paragraph*{例2} 求解方程 $\left(\frac{dy}{dx}\right)^3 + 2x\frac{dy}{dx} - y = 0$
+
+\paragraph*{解2} 
+\[
+y = p^3 + 2xp, \quad p = \frac{dy}{dx}
+\]
+
+上式左边关于 $x$ 求导：
+\[
+p = 3p^2\frac{dp}{dx} + 2p + 2x\frac{dp}{dx}
+\]
+
+即：
+\[
+3p^2dp+2xdp+pdx=0
+\]
+
+有积分因子 $\mu(p) = p$  
+\[
+(3p^3 + 2xp)\,dp + p^2\,dx = 0 \quad (p \neq 0)
+\]
+
+\[
+d\!\left(\tfrac{3}{4}p^4 + p^2x\right) = 0
+\]
+
+通解：
+\[
+\tfrac{3}{4}p^4 + p^2x = C
+\]
+
+即：
+\[
+x = C p^{-2} - \tfrac{3}{4}p^2
+\]
+
+代入得：
+\[
+y = p^3 + 2xp = \frac{2C}{p}-\frac{1}{2}p^3
+\]
+
+
+
+故原方程为隐式通解为：
+\[
+\begin{cases}
+x = \dfrac{C}{p^2} - \dfrac{3}{4}p^2,\\[6pt]
+y = \dfrac{2C}{p} - \dfrac{1}{2}p^3
+\end{cases}
+\]
+其中 $p$ 为参数，$C$ 为任意常数。  当 $p=0$ 时，有特解 $y=0$。
+
+
+\paragraph*{例3} 求解方程 $y = \left(\dfrac{dy}{dx}\right)^2 - x\dfrac{dy}{dx} + \frac{x^2}{2} $
+
+\paragraph*{解3}
+令 $\dfrac{dy}{dx} = p$，则 $y = p^2 - xp + \frac{x^2}{2}$。
+
+两边对 $x$ 求导：
+\[
+p = 2p\dfrac{dp}{dx} - x\dfrac{dp}{dx} + x
+\]
+
+\[
+2p\dfrac{dp}{dx}-2p-x\dfrac{dp}{dx}+x=0
+\]
+
+\[
+(\dfrac{dp}{dx}-1)(2p-x)=0
+\]
+
+因此 $\dfrac{dp}{dx}=1$ 或 $2p=x$。  
+
+有通解：
+\[
+y = (x + C)^2 - x(x + C) + \tfrac{1}{2}x^x
+\]
+
+特解为 $y = \tfrac{1}{4}x^2$。（几何上称为“包络线”）
+
+
+
+\subsection*{3. 可解出$x$的方程：$x = f(y, y')$ }
+
+令 $y' = p$，则 $x = f(y, p)$ 
+
+两边关于 $y$ 求导：
+\[
+\frac{1}{p}= \frac{\partial f}{\partial y} + \frac{\partial f}{\partial p}\frac{dp}{dy}
+\]
+
+即
+\[
+\frac{dp}{dy} = \frac{\frac{1}{p} - \frac{\partial f}{\partial p}}{\frac{\partial f}{\partial p}} = G(y, p)
+\]
+
+（关于 $y, p$ 的一阶显式微分方程）
+
+① 若 $\Phi(y, p, c)=0$，则原方程通解为：
+\[
+\begin{cases}
+\Phi(y, p, c)=0,\\
+x=f(y, p)
+\end{cases}
+\]
+其中 $p$ 为参数，$c$ 为任意常数。
+
+
+\paragraph*{例4}求解方程 $x\frac{1}{y}=y'^2$
+
+\paragraph*{解4}
+\[
+x = y p^2,\quad p = y'
+\]
+
+两边对 $y$ 求导：
+\[
+\frac{1}{p}=p^2+2yp\frac{dp}{dy}
+\]
+
+\[
+\dfrac{dp}{dy} = \dfrac{\frac{1}{p}-p^2}{2py}=\frac{1-p^3}{2yp^2}
+\]
+
+\[
+\frac{p^2}{1-p^3}dp=\frac{1}{2y}dy
+\]
+
+积分：
+\[
+-\tfrac{1}{3}\ln(1 - p^2) = \tfrac{1}{2}\ln|y| + C
+\]
+
+原方程通解：
+\[
+-\tfrac{1}{3}\ln(1 - p^2) = \tfrac{1}{2}\ln|y| + C, x=yp^2
+\]
+
+其中 $p$ 为参数，$C$ 为任意常数。当 $p = 1$ 时显然也是解；$y = 0$ 时也是解。
+
+
+
+
+\paragraph*{例5}
+求解方程 $y = xy' + \varphi(y')$，其中 $\varphi \in C^{(2)}$ 且 $\varphi'' \ne 0$。（Clairaut Equation）
+
+\paragraph*{解5} 
+令 $y' = p$，则 $y = xp + \varphi(p)$。
+
+两边对 $x$ 求导：
+\[
+p = p + x\dfrac{dp}{dx} + \varphi'(p)\dfrac{dp}{dx}
+\]
+\[
+[x + \varphi'(p)]\dfrac{dp}{dx} = 0
+\]
+
+① 若 $\dfrac{dp}{dx} = 0$，则 $p = C$，此时原方程通解为：
+\[
+\begin{cases}
+y = xp+\varphi(p)
+p=C
+\end{cases}
+\]
+
+② 若 $x + \varphi'(p) = 0$，此时原方程的\textbf{一个特解}为：
+\[
+\begin{cases}
+y = -p\varphi'(p) + \varphi(p),\\[3pt]
+x = -\varphi'(p)
+\end{cases}
+\]
+
+\paragraph*{Rem.} 上述方程称为 Clairaut 方程。
+
+
+\paragraph*{例6}
+求解方程 $y = xy' + (y')^2$
+
+\paragraph*{解6}
+\[
+\varphi(u) = u^2,\quad \varphi'(u) = 2u,\quad \varphi''(u) = 2 \ne 0
+\]
+
+通解为：
+\[
+y = Cx^2 + C^2
+\]
+
+特解为：
+\[
+\begin{cases}
+y = -p\varphi'(p) + \varphi(p) = -2p^2 + p^2 = -p^2,\\[3pt]
+x = -\varphi'(p) = -2p
+\end{cases}
+\]
+
+即 $y = -\dfrac{x^2}{4}$。
+
+
+\subsection*{4. 不显含 $y$ 的方程 $F(x, y') = 0$}
+
+令 $y' = p$，则 $F(x, p) = 0$。
+
+设其为参数方程：
+\[
+\begin{cases}
+x = \varphi(t),\\
+p = \psi(t)
+\end{cases}
+\]
+
+由于 $dy = p\,dx = \psi(t)\,d\varphi(t)$，从而 $dy = \psi(t)\varphi'(t)\,dt$
+
+两边积分得：
+\[
+y = \int \psi(t)\varphi'(t)\,dt + C
+\]
+
+原方程的参数形式通解：
+\[
+\begin{cases}
+y = \int \psi(t)\varphi'(t)\,dt + C,\\[3pt]
+x = \varphi(t)
+\end{cases}
+\]
+
+其中 $t$ 为参数，$C$ 为任意常数。
+
+
+
+\paragraph*{例7}
+求解方程 $x\sqrt{1 + (y')^2} = y'$
+
+\paragraph*{解7}
+令 $y' = p$，则 $F(x, p) = x\sqrt{1 + p^2} - p = 0$
+
+设：
+\[
+x = \sin t, \quad p = \tan t
+\]
+
+由于 $dy = p\,dx$，有
+\[
+y = \int \tan t \cos t\,dt = \int \sin t\,dt = -\cos t + C
+\]
+
+原方程通解：
+\[
+\begin{cases}
+x = \sin t,\\
+y = -\cos t + C
+\end{cases}
+\]
+
+
+
+
+
+\paragraph*{例8}
+求解方程 $x^3 + xy'^3 - 3xy' = 0$
+
+\paragraph*{解8}
+令 $y' = p$，则 $x^3 + p^3 - 3xp = 0$
+
+设 $x = t^3$，则
+\[
+p = \frac{3t^2}{1 + t^3}, x = \frac{3t}{1+t^3}
+\]
+
+由于 $dy = p\,dx = \frac{3t^2}{1 + t^3} \cdot \frac{3(1+t^3)-3t\cdot 3t^2}{(1+t^3)^2} dt= \frac{9t^2(1 -2t^3)}{(1+t^3)^3}\,dt$
+
+
+\[
+y = \int \frac{9t^3(1 - 2t^3)}{(1 + t^3)^3}\,dt + C=\frac{3}{2}\cdot \frac{1+4t^3}{(1+t^3)^3} + C
+\]
+
+
+
+原方程参数形式通解：
+\[
+\begin{cases}
+x = \dfrac{3t}{1 + t^3},\\[6pt]
+y = \frac{3}{2}\cdot \frac{1+4t^3}{(1+t^3)^3} + C
+\end{cases}
+\]
+
+\subsection*{5. 不显含 $x$ 的方程 $F(y, y') = 0$}
+
+令 $y' = p$，则 $F(y, p) = 0$。  
+设其为参数方程：
+\[
+\begin{cases}
+y = \varphi(t),\\
+p = \psi(t),
+\end{cases}
+\quad t \text{ 为参数。}
+\]
+
+由于 $dy = p\,dx$，故 $dx = \dfrac{dy}{p} = \dfrac{\varphi'(t)}{\psi(t)}\,dt$
+
+两边积分得：
+\[
+x = \int \frac{\varphi'(t)}{\psi(t)}\,dt + C
+\]
+
+原方程的参数形式通解：
+\[
+\begin{cases}
+x = \int \dfrac{\varphi'(t)}{\psi(t)}\,dt + C,\\[6pt]
+y = \varphi(t)
+\end{cases}
+\]
+
+当 $p = 0$ 时，若 $F(y, 0) = 0$，则有常数解 $y = k$。
+
+
+\paragraph*{例9}
+求解方程 $y^2(1 - y') = (2 - y')^2$
+
+\paragraph*{解9} 
+令 $y' = p$，则 $y^2(1 - p) = (2 - p)^2$
+
+设 $2 - p = ty$，则 $ty-1=t^2,y=t+\frac{1}{t},p=1-t^2(p \neq 0)$，得
+
+
+又因为 $dx = \frac{1}{p}dy = \frac{1-\frac{1}{t}}{1-t^2}dt = -\frac{1}{t^2}dt, x=\int -\frac{1}{t^2}dt=\frac{1}{t}+C$
+
+原方程通解：
+\[
+\begin{cases}
+x = \frac{1}{t} + C,\\[3pt]
+y = t+\frac{1}{t}
+\end{cases}
+\]
+
+或写作：
+\[
+y = x-C+\frac{1}{x-C}
+\]
+
+当 $p = 0$ 时，有 $y^2 = 4$，即 $y = \pm 2$ 也是特解。
+
+
+\subsection*{6. 一般的一阶隐式方程$F(x, y, y') = 0$}
+
+令 $y' = p$，则 $F(x, y, p) = 0$。
+
+令
+\[
+x = f(u, v), \quad y = g(u, v), \quad p = h(u, v)
+\]
+
+代入：
+\[
+dy = p\,dx, \quad \frac{\partial g}{\partial u}du + \frac{\partial g}{\partial v}dv = h(u, v)\left(\frac{\partial f}{\partial u}du + \frac{\partial f}{\partial v}dv\right)
+\]
+
+即：
+\[
+M(u, v)\,du + N(u, v)\,dv = 0
+\]
+
+求出其通解或特解，从而可求出原方程的通解。
+
+
+
+\paragraph*{例10} 求解方程 $\left(\dfrac{dy}{dx}\right)^2 + y - x = 0$
+
+\paragraph*{解10} 
+令 $p = \dfrac{dy}{dx}$，则 $p^2 + y - x = 0$
+
+设 $x = u,\; p = v,\; y = u - v^2$
+
+由 $dy = p\,dx$，
+\[
+d(u - v^2) = v\,du \quad \Rightarrow \quad (1 - v)\,du = 2v\,dv
+\]
+
+积分得：
+\[
+u = -2v - \ln(v - 1)^2 + C \quad \text{特解为$v=1$}
+\]
+
+原方程通解：
+\[
+\begin{cases}
+x = -2v - \ln(v - 1)^2 + C,\\
+y = -2v - \ln(v - 1)^2 - v^2 + C
+\end{cases}
+\]
+
+$C$ 为任意常数。
+
+特解：$y = x - 1$
+
+
+\paragraph{思考：}
+\begin{enumerate}
+  \item Riccati 方程：$\frac{dy}{dx} = P(x)y^2 + Q(x)y + R(x)$ 除特例外，一般没有初等解法.
+  \item $\frac{dy}{dx} = 2\sqrt{y},y(0)=0$的解不唯一，$y \equiv 0$，$y = x^2$ 都是解。
+  \item 考虑$\frac{dy}{dx} = f(x, y),y(x_0)=y_0$ 的解的\textbf{存在性、唯一性}以及\textbf{连续性}。
+\end{enumerate}
+
+
+
+
+\mychapter{§3 一阶微分方程的解的存在性定理}
+\paragraph{内容}
+\begin{itemize}
+  \item 解的存在唯一性定理
+  \item 解的延拓性定理
+  \item 解对初值的连续性、可微性
+\end{itemize}
+
+
+\mysection{§3.1 解的存在唯一性定理与逐步逼近法}
+
+
+\section*{一、存在唯一性定理}
+
+\subsection*{1. 显式一阶微分方程的初值问题}
+
+\[
+\begin{cases}
+\dfrac{dy}{dx} = f(x, y), \quad (\ast) \\[6pt]
+y(x_0) = y_0, \quad (\ast\ast)
+\end{cases}
+\]
+
+其中 $f(x, y)$ 在矩形域 $D: |x - x_0| \le a,\, |y - y_0| \le b$ 上连续。
+
+
+将方程化为积分形式：
+\[
+y = y_0 + \int_{x_0}^{x} f(t, y)\,dt
+\]
+
+考虑：  
+\[
+\varphi_0(x) = y_0, \quad 
+\varphi_1(x) = y_0 + \int_{x_0}^{x} f(t, \varphi_0(t))\,dt, \quad 
+\ldots, \quad 
+\varphi_n(x) = y_0 + \int_{x_0}^{x} f(t, \varphi_{n-1}(t))\,dt
+\]
+
+若 $\varphi_n(x)$ 极限存在，记 $\varphi(x) = \lim_{n \to \infty} \varphi_n(x)$，则：
+
+\[
+\varphi(x) = y_0 + \int_{x_0}^{x} f(t, \varphi(t))\,dt
+\]
+
+由此得：
+\[
+y = \varphi(x) \text{ 是积分方程的解，从而是微分方程的解。}
+\]
+
+
+\paragraph{Thm. (Picard)}
+
+若函数 $f(x, y)$ 满足条件：
+\begin{enumerate}
+\item 在矩形域 $D$ 上连续；
+\item 在矩形域 $D$ 上关于 $y$ 满足 Lipschitz 条件：
+\end{enumerate}
+
+\[
+\exists L > 0 \text{ 使得 } \forall (x, y_1), (x, y_2) \in D,\quad |f(x, y_1) - f(x, y_2)| \le L |y_1 - y_2|
+\]
+
+ 
+则初值问题 $(\ast) \ (\ast\ast)$ 存在唯一解 — 即函数 $y = \varphi(x)$，且在区间 $|x - x_0| \le h$ 上成立，
+
+其中：
+\[
+h = \min\left\{ a, \frac{b}{M} \right\}, \quad 
+M = \max_{(x, y) \in D} |f(x, y)|
+\]
+
+下面分五个命题来证明：（只考虑$x \in [x_0, x_0+h]$,$x \in [x_0-h, x_0]$可类似得到）
+
+\paragraph{Prop 1.}  
+$y = \varphi(x)$ 是初值问题
+\[
+\begin{cases}
+\dfrac{dy}{dx} = f(x, y), & \text{(＊)} \\[6pt]
+y(x_0) = y_0, & \text{(＊＊)}
+\end{cases}
+\]
+
+的定义于区间 $[x_0, x_0 + h]$ 上的解  
+\(\Longleftrightarrow\)
+$y = \varphi(x)$ 是积分方程
+\[
+y = y_0 + \int_{x_0}^{x} f(t, y(t))\,dt, \quad x_0 \le x \le x_0 + h
+\]
+
+的连续解。
+
+
+\paragraph{\proof}   
+($\Longrightarrow$ ) 设 $y = \varphi(x)$ 是初值问题的解，则
+\[
+\dfrac{d\varphi(x)}{dx} = f(x, \varphi(x)), \quad \varphi(x_0) = y_0.
+\]
+
+两边关于 $x$ 从 $x_0$ 到 $x$ 积分：
+
+\[
+\varphi(x) - \varphi(x_0) = \int_{x_0}^{x} f(t, \varphi(t))\,dt.
+\]
+
+即
+\[
+\varphi(x) = y_0 + \int_{x_0}^{x} f(t, \varphi(t))\,dt.
+\]
+
+因此 $y = \varphi(x)$ 是积分方程的解。又 $\varphi(x)$ 连续，  
+故 $y = \varphi(x)$ 是 $[x_0, x_0 + h]$ 上的连续解。
+
+($\Longleftarrow$ ) 设 $y = \varphi(x)$ 是积分方程的解：
+\[
+\varphi(x) = y_0 + \int_{x_0}^{x} f(t, \varphi(t))\,dt, \quad x_0 \le x \le x_0 + h.
+\]
+
+则
+\[
+\varphi'(x) = \dfrac{d}{dx}\!\left( y_0 + \int_{x_0}^{x} f(t, \varphi(t))\,dt \right)
+= f(x, \varphi(x)),
+\quad \text{且} \quad \varphi(x_0) = y_0.
+\]
+
+因此 $y = \varphi(x)$ 是初值问题 (＊)(＊＊) 的定义于区间 $[x_0, x_0 + h]$ 上的解。  
+\(\square\)
+
+
+
+\paragraph{Prop 2.}   
+令 $\varphi_0(x) = y_0$，构造 Picard 序列 $\varphi_n(x)$：
+
+\[
+\begin{cases}
+\varphi_0(x) = y_0, \\[6pt]
+\varphi_n(x) = y_0 + \int_{x_0}^{x} f[t, \varphi_{n-1}(t)]\,dt, 
+\quad x_0 \le x \le x_0 + h,\quad n = 1,2,\ldots
+\end{cases}
+\]
+
+则对所有的 $n$，上式中函数 $\varphi_n(x)$ 在 $[x_0, x_0 + h]$ 上有定义、连续，且满足
+\[
+|\varphi_n(x) - y_0| \le b.
+\]
+
+
+\paragraph{\proof} 
+当 $n = 1$ 时，
+\[
+\varphi_1(x) = y_0 + \int_{x_0}^{x} f[t, y_0]\,dt.
+\]
+
+显然 $\varphi_1(x)$ 在 $x_0 \le x \le x_0 + h$ 上有定义且连续，并且
+\[
+|\varphi_1(x) - y_0|
+= \left|\int_{x_0}^{x} f[t, y_0]\,dt\right|
+\le \int_{x_0}^{x} |f[t, y_0]|\,dt
+\le M(x - x_0) \le Mh \le b.
+\]
+
+设 $k = n$ 时命题成立，则
+$\varphi_n(x)$ 在 $[x_0, x_0 + h]$ 上有定义、连续，且 $|\varphi_n(x) - y_0| \le b$。  
+下证当 $k = n + 1$ 时成立：
+
+\[
+\varphi_{n+1}(x) = y_0 + \int_{x_0}^{x} f[t, \varphi_n(t)]\,dt, \quad x_0 \le x \le x_0 + h.
+\]
+
+由于 $f(x, y)$ 在 $D$ 上连续，从而 $f(t, \varphi_n(t))$ 在 $x_0 \le t \le x_0 + h$ 上连续，  
+故积分存在，且 $\varphi_{n+1}(x)$ 在 $[x_0, x_0 + h]$ 上连续。
+
+同理可得：
+\[
+|\varphi_{n+1}(x) - y_0|
+= \left|\int_{x_0}^{x} f[t, \varphi_n(t)]\,dt\right|
+\le \int_{x_0}^{x} |f[t, \varphi_n(t)]|\,dt
+\le M(x - x_0) \le Mh \le b.
+\]
+
+因此命题对所有 $n$ 成立。 \(\square\)
+
+
+\paragraph{Prop 3.}  
+函数序列 $\{\varphi_n(x)\}$ 在 $[x_0, x_0 + h]$ 上是一致收敛的。  
+记 $\displaystyle \varphi(x) = \lim_{n \to \infty} \varphi_n(x),\quad x_0 \le x \le x_0 + h.$
+
+
+\paragraph{\proof}  
+构造的数列 $\{\varphi_n(x)\}$ 满足
+\[
+\varphi_0(x) = y_0, \quad 
+\varphi_{n+1}(x) = y_0 + \int_{x_0}^{x} f[t, \varphi_n(t)]\,dt.
+\]
+
+部分和
+\[
+S_n(x) = \varphi_0(x) + \sum_{k=1}^{n} [\varphi_k(x) - \varphi_{k-1}(x)] = \varphi_n(x).
+\]
+
+于是 $\{\varphi_n(x)\}$ 一致收敛性与级数
+\[
+(H): \sum_{k=1}^{\infty} [\varphi_k(x) - \varphi_{k-1}(x)]
+\]
+
+一致收敛性等价。
+
+
+首先对 $n=1$ 估计：
+\[
+|\varphi_1(x) - \varphi_0(x)| 
+= \left| \int_{x_0}^{x} f[t, \varphi_0(t)]\,dt \right|
+\le \int_{x_0}^{x} |f[t, \varphi_0(t)]|\,dt 
+\le M(x - x_0)
+\le M h.
+\]
+
+对 $n=2$：
+\begin{align*}
+|\varphi_2(x) - \varphi_1(x)|
+&= \left| \int_{x_0}^{x} [f(t, \varphi_1(t)) - f(t, \varphi_0(t))]\,dt \right| \\[6pt]
+&\le \int_{x_0}^{x} L\,|\varphi_1(t) - \varphi_0(t)|\,dt \\[6pt]
+&\le \int_{x_0}^{x} L M (t - x_0)\,dt \\[6pt]
+&= \tfrac{1}{2} M L (x - x_0)^2 \\[6pt]
+&\le \tfrac{1}{2} M L h^2.
+\end{align*}
+
+同理：
+\[
+|\varphi_3(x) - \varphi_2(x)| 
+\le L \int_{x_0}^{x} |\varphi_2(t) - \varphi_1(t)|\,dt 
+\le \frac{M L^2}{3!} (x - x_0)^3
+\le \frac{M L^2 h^3}{3!}.
+\]
+
+归纳可得：对所有 $n$，有
+\[
+|\varphi_n(x) - \varphi_{n-1}(x)|
+\le \frac{M L^{n-1}}{n!} (x - x_0)^n
+\le \frac{M L^{n-1} h^n}{n!}.
+\]
+
+由 Weierstrass 判别法，级数 $(H)$ 在 $[x_0, x_0 + h]$ 上一致收敛。  
+因此 $\varphi_n(x)$ 在 $[x_0, x_0 + h]$ 上一致收敛于连续函数 $\varphi(x)$。
+
+又由于 $|\varphi_n(x) - y_0| \le b$，取极限得$
+|\varphi(x) - y_0| \le b.$
+\(\square\)
+
+
+\paragraph{Prop 4.}  
+$y = \varphi(x)$ 是积分方程
+\[
+y = y_0 + \int_{x_0}^{x} f[t, y(t)]\,dt
+\]
+定义在 $[x_0, x_0 + h]$ 上的连续解。
+
+
+\paragraph{\proof}  
+由定义，
+\[
+\varphi_n(x) = y_0 + \int_{x_0}^{x} f[t, \varphi_{n-1}(t)]\,dt.
+\]
+
+由 Lipschitz 条件，
+\[
+|f[t, \varphi_n(t)] - f[t, \varphi(t)]| \le L |\varphi_n(t) - \varphi(t)|.
+\]
+
+有函数列 $\{f[t, \varphi_n(t)]\}$ 在 $[x_0, x_0 + h]$ 一致收敛至 $f[t, \varphi(t)]$。  
+
+因此  
+\[
+\varphi_n(x) = y_0 + \int_{x_0}^{x} f[t, \varphi_{n-1}(t)]\,dt
+\]
+
+两边取 $n \to \infty$ 极限，有  
+\[
+\varphi(x) = y_0 + \int_{x_0}^{x} f[t, \varphi(t)]\,dt.
+\]
+
+即 $\varphi(x)$ 是积分方程 
+\[
+y = y_0 + \int_{x_0}^{x} f[t, y(t)]\,dt
+\]
+
+在 $[x_0, x_0 + h]$ 上的连续解。 \(\square\)
+
+
+\paragraph{Prop 5.}  
+设 $\varphi(x)$ 是积分方程
+\[
+y = y_0 + \int_{x_0}^{x} f[t, y(t)]\,dt
+\]
+在 $[x_0, x_0 + h]$ 上的唯一连续解，则 $\varphi(x) = \psi(x),\ x_0 \le x \le x_0 + h$。
+
+
+
+\paragraph{\proof}  
+设 $g(x) = |\varphi(x) - \psi(x)|$，则 $g(x)$ 在 $[x_0, x_0 + h]$ 上有定义、连续、非负，且  
+\[
+g(x_0) = 0, \quad \forall x \in [x_0, x_0 + h].
+\]
+
+由
+\[
+\varphi(x) = y_0 + \int_{x_0}^{x} f[t, \varphi(t)]\,dt, 
+\quad \psi(x) = y_0 + \int_{x_0}^{x} f[t, \psi(t)]\,dt,
+\]
+
+得
+\[
+g(x) = \left| \int_{x_0}^{x} [f(t, \varphi(t)) - f(t, \psi(t))]\,dt \right|
+\le \int_{x_0}^{x} |f(t, \varphi(t)) - f(t, \psi(t))|\,dt.
+\]
+
+由于 $f(x, y)$ 关于 $y$ 满足 Lipschitz 条件，  
+\[
+g(x) \le L \int_{x_0}^{x} g(t)\,dt, \quad x_0 \le x \le x_0 + h.
+\]
+
+令 
+\[
+u(x) = L \int_{x_0}^{x} g(t)\,dt,
+\]
+
+则 $u(x)$ 是定义在 $[x_0, x_0 + h]$ 上的连续可微函数，  
+且 $u(x_0) = 0$, 并有
+\[
+0 \le g(x) \le u(x), \quad u'(x) = L g(x) \le L u(x), \quad u'(x) - L u(x) \le 0.
+\]
+
+由微分不等式比较定理得：
+\[
+0 \le g(x) \le u(x) \le 0, \quad \text{即 } g(x) \equiv 0, \ x_0 \le x \le x_0 + h.
+\]
+因此 $\varphi(x) = \psi(x)$。 \(\square\)
+
+
+
+\paragraph{Rem. 对定理的几点说明：}
+
+\begin{enumerate}
+\item 存在唯一性定理保证解存在的区间为  
+\[
+h = \min \{ a, \tfrac{b}{M} \}.
+\]
+矩形区域：$|x - x_0| \le a, \ |y - y_0| \le b$,  
+且 $M = \max |f(x, y)|$。
+
+若 $|f(x, y)| \le M$, $|y'| \le M$，  
+则：
+
+① 若 $a \le \tfrac{b}{M}$，则 $y = \varphi(x)$ 在 $x_0 - a \le x \le x_0 + a$ 上有定义。  
+
+② 若 $a > \tfrac{b}{M}$，此时不能保证解在 $x_0 - a \le x \le x_0 + a$ 上存在，  
+只有当 $0 < M (x - x_0) < b$ 时才保证该区间存在解。  
+
+因此更广的存在范围应为  
+\[
+|x - x_0| < h = \min\{a, \tfrac{b}{M}\}.
+\]
+
+\item 关于满足 Lipschitz 条件的充分条件，常用以下结论：
+
+
+\paragraph{Thm.} 
+若 $f(x,y)$ 在矩形域 $D$ 上关于 $y$ 的偏导数 $f_y(x,y)$ 存在且有界，  
+即 $\big| f_y(x,y) \big| \le L$，则 Lipschitz 条件成立。
+
+\textbf{\proof}  
+\[
+|f(x,y_1) - f(x,y_2)| 
+= \left| \int_{y_2}^{y_1} f_y(x, y)\,dy \right|
+\le L |y_1 - y_2|, \quad \forall (x,y_1),(x,y_2) \in D.
+\]
+但反之不成立，即若 $f(x,y)$ 关于 $y$ 满足 Lipschitz 条件，  
+$f(x,y)$ 不一定存在偏导数。
+
+\paragraph{例} 
+$f(x,y) = |y|$ 在任意矩形域上满足 Lipschitz 条件，  
+但在 $y=0$ 处无偏导数。
+
+
+\item 对于线性方程 $y' = P(x)y + Q(x)$，其中 $P,Q \in C[a,b]$。
+
+当 $P(x), Q(x) \in C[a,b]$ 时，对任一初值 $(x_0, y_0),\ x_0 \in [a,b]$，  
+所得定解问题在整个区间 $[a,b]$ 上有定义、连续。
+
+\[
+|f(x,y_1) - f(x,y_2)| = |P(x)|\,|y_1 - y_2| \le L |y_1 - y_2|.
+\]
+
+
+\item 关于满足 Lipschitz 条件是解唯一的充分条件，但\textbf{不是必要条件}。
+
+\paragraph{例}
+证明方程
+\[
+y' = 
+\begin{cases}
+0, & y = 0,\\[3pt]
+y\,\ln|y|, & y \ne 0
+\end{cases}
+\]
+的解都是唯一的。
+
+\paragraph{\proof}  
+当 $y \ne 0$ 时，$f(x,y) = y\ln|y|$ 连续，  
+且 $f_y(x,y) = 1+\ln|y|$ 在 $y \ne 0$ 的邻域连续。  
+因此对于初始条件 $(x_0, y_0)$，方程满足 $y(x_0) = y_0$ 的解是存在唯一的。
+
+此时通解为 
+\[
+y = \pm e^{c e^{x}},
+\]
+其中 $y = e^{c e^{x}}$ 为上半平面通解，$y = -e^{c e^{x}}$ 为下半平面通解。
+
+注意到 $y=0$ 是方程的特解。
+
+因此对于初始点位于 $y=0$ 的情况 $(x_0, 0)$，只有 $y=0$ 这一个通解。  
+从而保证在 $y=0$ 平面上，$y(x_0) = 0$ 的解都是唯一的。
+
+但
+\[
+|f(x,y) - f(x,0)| = |\ln|y|| \cdot |y-0| , \lim_{y\rightarrow 0}{|\ln|y||}=\infty 
+\]
+即 $f(x,y)$ 不满足 Lipschitz 条件。 \(\square\)
+
+\paragraph{例}讨论方程 
+\[
+y' = 3y^{\tfrac{2}{3}}
+\]
+的初值问题解的唯一性。
+
+\paragraph{解} 
+\[
+f(x,y) = 3y^{\tfrac{2}{3}} \in C(\mathbb{R}^2), 
+\quad f_y = 2y^{-\tfrac{1}{3}}.
+\]
+因此当 $y \ne 0$ 时，方程过 $(x_0, y_0)\ (y_0 \ne 0)$ 的解是唯一的。  
+对于过原点一点 $(x_0, 0)$，$y = 0$ 也是解。  
+
+\end{enumerate}
+
+
+
+\subsection*{2. 隐式一阶微分方程的初值问题}
+
+\paragraph{Thm2.}
+若在点 $(x_0, y_0, y'_0)$ 的某一邻域内：
+
+\begin{enumerate}
+\item[(i)] $F(x,y,y')$ 关于所有变量连续且存在连续偏导数；
+\item[(ii)] $F(x_0, y_0, y'_0) = 0$；
+\item[(iii)] $\dfrac{\partial F}{\partial y'}(x_0, y_0, y'_0) \ne 0$；
+\end{enumerate}
+
+则方程 $F(x,y,y') = 0$ 存在唯一的解 $y = y(x)$，  
+且在区间 $|x - x_0| \le h$ 内满足初始条件 $y(x_0) = y_0,\ y'(x_0) = y'_0$。
+
+
+
+\paragraph{\proof}  
+由 $F(x,y,y') = 0$ 可隐函数存在定理，  
+可把 $y'$ 唯一表示为 $y' = f(x,y)$，  
+且 $f(x,y)$ 在 $(x_0, y_0)$ 的某一邻域内连续，且 $f(x_0,y_0) = y'_0$。
+若 $F$ 关于所有变量连续且存在连续偏导数，  
+则 $f(x,y)$ 也关于 $x,y$ 具有连续偏导数，且
+$
+f_y = -\frac{F_y}{F_{y'}}.
+$有界。  
+
+因此由 Thm 1（Picard 定理），方程满足初始条件 $y(x_0)=y_0$ 的解存在且唯一。  
+\(\square\)
+
+\section*{二、近似计算与误差估计}
+
+\subsection*{1. 近似计算}
+
+求方程近似解的方法：Picard 逐次逼近法：
+\[
+\begin{cases}
+\varphi_0(x) = y_0, \\[6pt]
+\varphi_n(x) = y_0 + \displaystyle\int_{x_0}^{x} f[t, \varphi_{n-1}(t)]\,dt, 
+\quad x_0 \le x \le x_0 + h.
+\end{cases}
+\]
+
+
+
+\subsection*{2. 误差估计}
+
+\[
+|\varphi_n(x) - \varphi_{n-1}(x)|
+\le \frac{M L^{n-1}}{(n+1)!} h^{n+1}, \quad |x - x_0| \le h.
+\]
+
+\paragraph{\proof}  
+\[
+\varphi_n(x) = y_0 + \int_{x_0}^{x} f[t, \varphi_{n-1}(t)]\,dt,
+\]
+
+假设  
+\[
+|\varphi_{n-1}(x) - \varphi(x)| \le \frac{M L^{n-1}}{n!} h^n
+\]
+
+成立。  
+
+下证：
+\begin{align*}
+|\varphi_n(x) - \varphi(x)|
+&\le \int_{x_0}^{x} |f[t, \varphi_{n-1}(t)] - f[t, \varphi(t)]|\,dt \\[6pt]
+&\le L \int_{x_0}^{x} |\varphi_{n-1}(t) - \varphi(t)|\,dt \\[6pt]
+&\le L \cdot \frac{M L^{n-1}}{n!} \int_{x_0}^{x} (t - x_0)^n\,dt \\[6pt]
+&= \frac{M L^n}{(n+1)!} h^{n+1}.
+\end{align*}
+
+因此
+\[
+|\varphi_n(x) - \varphi(x)| \le \frac{M L^n}{(n+1)!} h^{n+1}.
+\]
+
+
+\paragraph{例}   
+求方程  
+\[
+y' = x^2 + y^2, \qquad y(0) = 0
+\]
+
+解的存在唯一区间，并求在此区间上的真解与误差不超过 $0.05$ 的近似解。
+\paragraph{解} 
+设
+\[
+D: -1 \le x \le 1, \ -1 \le y \le 1.
+\]
+
+则
+\[
+h = \min\{ a, \tfrac{b}{M} \} = \tfrac{1}{2}, \quad a=1, \ b=1, \ M=2.
+\]
+
+解的存在区间为：$- \tfrac{1}{2} \le x \le \tfrac{1}{2}$。
+
+由误差估计式：
+\[
+|\varphi_n(x) - \varphi(x)| \le \frac{M L^n}{(n+1)!} h^{n+1}
+= \frac{2 \cdot 2^n}{(n+1)!} \left(\frac{1}{2}\right)^{n+1}
+= \frac{1}{(n+1)!} < 0.05.
+\]
+
+由迭代公式：
+\[
+\begin{cases}
+\varphi_0(x) = 0, \\[3pt]
+\varphi_1(x) = \tfrac{1}{3}x^3, \\[3pt]
+\varphi_2(x) = \tfrac{1}{3}x^3 + \tfrac{1}{63}x^7, \\[3pt]
+\varphi_3(x) = \tfrac{1}{3}x^3 + \tfrac{1}{63}x^7 + \tfrac{1}{59533}x^{15}.
+\end{cases}
+\]
+
+\paragraph{Rem. (1)}  
+若 $D = \{ -2 \le x \le 2, \ -2 \le y \le 2 \}$，  
+方程
+
+\[
+\begin{cases}
+y' = x^2 + y^2, \\[3pt]
+y(0) = 0
+\end{cases}
+\]
+
+有 $M = \max_D |x^3 + y^3| = 8$,  
+$h = \min\{a, \tfrac{b}{M}\} = \min\{2, \tfrac{1}{4}\} = \tfrac{1}{4}$，  
+解的存在区间：$-\tfrac{1}{4} \le x \le \tfrac{1}{4}$。
+
+
+
+\paragraph{Rem. (2)}  
+若
+
+\[
+\begin{cases}
+y' = y^2, \\[3pt]
+y(0) = 1,
+\end{cases}
+\]
+
+① 由初值解存在有 $y = \dfrac{1}{1-x}$，存在区间 $(-\infty, 1)$； 
+
+② 由存在唯一性定理，对任意 $(x_0, y_0) \in \mathbb{R}^2$，  
+取矩形区域 $D = [x_0 - a, x_0 + a] \times [1 - b, 1 + b]$。  
+有
+$
+M = \max_D |y|^2 = (1 + b)^2, \quad 
+h = \min\{ a, \tfrac{b}{M} \} = \min\{ a, \tfrac{1}{4} \}.
+$存在区间：$(-\tfrac{1}{4}, \tfrac{1}{4})$。 \(\square\)
+
+\mysection{§3.2 解的延拓}
+
+\section*{一、微分解与可延拓区间}
+
+\subsection*{1. 定义} 
+对定义在区域 $G \subseteq \mathbb{R}^2$ 上的微分方程
+\[
+\dfrac{dy}{dx} = f(x, y) \tag{＊}
+\]
+
+设 $y = \varphi(x)$ 是定义在区间 $I \subset \mathbb{R}$ 上的一个解。  
+若方程还有一个定义在区间 $I_1 \subset \mathbb{R}$ 上的解 $y = \psi(x)$，  
+且满足：
+
+\begin{enumerate}
+\item $I_1 \supset I$, 且 $I_1 \ne I$；
+\item 在 $I$ 上有 $\varphi(x) \equiv \psi(x)$；
+\end{enumerate}
+
+则称 $y = \psi(x)$（或 $y = \varphi(x)$）在 $I_1$ 上的 \textbf{延拓}。若不存在满足条件的解 $y = \psi(x)$，则称 $y = \varphi(x)$ 在 $I$ 上是方程 (＊) 的 \textbf{饱和解（或称不可延拓解）}。此时的不可延拓区间 $I$，称为一个 \textbf{饱和区间}。
+
+
+\section*{二、局部 Lipschitz 条件}
+
+\subsection*{1. 定义} 
+若函数 $f(x,y)$ 在区域 $G$ 内连续，且对 $G$ 内每一点 $P$，  
+都存在以 $P$ 为中心、完全包含在 $G$ 内的矩形域 $R_P$，  
+使得 $f(x,y)$ 在 $R_P$ 上关于 $y$ 满足 Lipschitz 条件，  
+则称 $f(x,y)$ 在 $G$ 上关于 $y$ 满足 \textbf{局部 Lipschitz 条件}。
+\paragraph{Rem.}
+对于不同的点，其矩形域 $R_P$ 的大小和 Lipschitz 常数 $L$ 均可能不同。  
+局部 Lipschitz 条件是 Lipschitz 条件的必要而非充分条件。
+
+
+\section*{三、延拓定理}
+
+\paragraph{Thm.}
+若方程 (＊) 的右端 $f(x,y)$ 在有界区域 $G$ 内连续，  
+且在 $G$ 内关于 $y$ 满足局部 Lipschitz 条件，  
+则方程 (＊) 通过 $G$ 内任一点 $(x_0, y_0)$ 的解  
+都能在 $G$ 上以延拓形式定义，  
+直到 $(x, \varphi(x))$ 逼近 $G$ 的边界为止。
+
+
+\paragraph{\proof} 
+对 $(x_0, y_0) \in G$，由解的存在唯一性定理可知：  
+初值问题
+\[
+\begin{cases}
+\dfrac{dy}{dx} = f(x,y), \\[6pt]
+y(x_0) = y_0
+\end{cases}
+\]
+
+存在唯一解 $y = \varphi(x)$，  
+且该解在区间 $[x_0 - h, x_0 + h]$ 内存在。
+取 $x_1 = x_0 + h_1$, $y_1 = \varphi(x_1)$，  
+以 $(x_1, y_1)$ 为中心作小矩形 $R_1 \subset G$。  
+
+则初值问题  
+\[
+\begin{cases}
+\dfrac{dy}{dx} = f(x,y), \\[4pt]
+y(x_1) = y_1
+\end{cases}
+\]
+
+存在唯一解 $y = \psi(x)$，且存在区间 $[x_0 + h_1,\, x_0 + h_1 + h_0]$。
+
+由于 $\varphi(x_1) = \psi(x_1)$，由唯一性，当 $x_0 - h_0 < x \le x_1$ 时，  
+有 $\varphi(x) = \psi(x)$。  
+
+定义函数  
+\[
+\varphi^*(x) =
+\begin{cases}
+\varphi(x), & x_0 - h_0 \le x \le x_0 + h_1,\\[3pt]
+\psi(x), & x_0 + h_1 < x \le x_0 + h_1 + h_0.
+\end{cases}
+\]
+
+则 $\varphi^*(x)$ 是方程 (＊) 带初值条件 $y(x_0)=y_0$  
+在 $[x_0 - h_0,\, x_0 + h_0 + h_1]$ 上的唯一延拓解。  
+
+因此，解 $y = \varphi(x)$ 可有序地沿 $x$ 方向延拓，  
+存在定义区间 $|x - x_0| < h$，  
+一直延拓到区间 $[x_0 - h_0,\, x_0 + h_0 + h_1]$。  
+
+同样可将 $y = \varphi(x)$ 向左延拓，  
+最终得到它的 \textbf{饱和解} $y = \varphi(x)$。
+
+
+
+\paragraph{Cor.}  
+任一解方向延拓至饱和解；饱和区间一定为开区间，若所定义区域中解可延拓至无穷。
+
+
+
+\paragraph{Rem.}  
+两种延拓至无穷的情形：
+\begin{enumerate}
+  \item $y = \varphi(x)$ 可延拓至 $[x_0, +\infty)$ 或 $(-\infty, x_0]$；  
+  \item $y = \varphi(x)$ 虽能延拓至 $[x_0, d)$，但当 $x \to d^-$ 时，  
+   $y = \varphi(x)$ 无界或 $(x, \varphi(x)) \to \partial G$。
+\end{enumerate}
+
+
+
+\paragraph{例1}  
+讨论方程  
+\[
+y' = \frac{y^2-1}{2}
+\]
+分别通过 $(0,0)$ 和 $(\ln2,-3)$ 的解的存在区间。
+
+
+
+\paragraph{解1}  
+$f(x,y) = \frac{y^2-1}{2}$ 在 $\mathbb{R}^2$ 上满足存在唯一性定理  
+及延拓定理的条件。  
+
+方程有通解：
+\[
+y = \frac{1 + Ce^{x}}{1 - Ce^{x}}.
+\]
+
+当 $(x_0, y_0) = (0,0)$ 和 $(\ln2,-3)$ 时，  
+分别有特解：
+\[
+y = \frac{1 - e^{x}}{1 + e^{x}}, \quad (-\infty, +\infty),
+\]
+\[
+y = \frac{1 + e^{x}}{1 - e^{x}}, \quad (0, +\infty).
+\]
+
+当 $x \to 0^+$ 时，$y \to -\infty$。
+
+
+\mychapter{§4 高阶微分方程}
+
+\noindent
+\paragraph{内容：}
+\begin{itemize}
+  \item 理解线性微分方程的一般理论；
+  \item 能够求解高阶常系数线性微分方程；
+  \item 掌握非齐次线性微分方程的常用解法；
+  \item 掌握带有常系数非齐次线性微分方程的特定系数方法和 Laplace 变换法；
+  \item 高阶方程降阶法和幂级数解法。
+\end{itemize}
+
+\mysection{§4.1 线性微分方程的一般理论}
+
+\section*{一、$n$阶线性微分方程的存在唯一性定理}
+
+\subsection*{1. $n$ 阶线性微分方程}
+\[
+\dfrac{d^n y}{dt^n} + a_1(t) \dfrac{d^{n-1}y}{dt^{n-1}} + \cdots + a_{n-1}(t) \dfrac{dy}{dt} + a_n(t)y = f(t) \tag{4.1}
+\]
+
+式 (4.1) 中，若 $f(t) \equiv 0$，则为齐次微分方程，此时记为
+\[
+\dfrac{d^n y}{dt^n} + a_1(t) \dfrac{d^{n-1}y}{dt^{n-1}} + \cdots + a_{n-1}(t) \dfrac{dy}{dt} + a_n(t)y = 0 \tag{4.2}
+\]
+
+$f(t) \ne 0$ 则为非齐次微分方程。其中 $a_i(t),\, i=1,2,\ldots,n$ 和 $f(t)$ 是 $[a,b]$ 上连续函数。
+
+
+\subsection*{2. 存在唯一性定理}
+\paragraph{Thm.} 若 $a_i(t),\, i=1,2,\ldots,n$ 及 $f(t)$ 都是 $[a,b]$ 上的连续函数，则 $\forall t_0 \in [a,b]$ 及 $y_0, y_0^{(1)}, \ldots, y_0^{(n-1)}$，方程 (4.1) 存在唯一解
+$
+y = \varphi(t)
+$
+,定义在 $t \in [a,b]$ 上，且满足初值条件
+\[
+\varphi(t_0) = y_0, \quad \varphi'(t_0) = y_0^{(1)}, \quad \ldots, \quad \dfrac{d^{(n-1)}\varphi}{dt^{(n-1)}}(t_0) = y_0^{(n-1)}.
+\]
+
+
+\paragraph{例1}
+判断下列方程的线性、齐次性、常系数性
+\begin{enumerate}
+  \item[(1)] $t^2 \dfrac{d^2 y}{dt^2} + t \dfrac{dy}{dt} + (t^2 -n^2)x = 0 \quad (n \text{为常数})$
+  \item[(2)] $\dfrac{d^2 y}{dt^2} + 2\dfrac{dy}{dt} + 3x = 0$
+  \item[(3)] $\dfrac{d^2 y}{dt^2} + 4x = \sin t$
+  \item[(4)] $t^2 \dfrac{d^2 y}{dt^2} + a_1 t\dfrac{dy}{dt} + a_2 x = f(t)\quad (a_1,a_2\text{为常数})$
+\end{enumerate}
+\paragraph{解1}
+(1)～(4) 均为线性方程，其中 (1)(2) 为齐次，(3)(4) 为非齐次，(2)(3) 为常系数方程。
+
+
+\section*{二、齐次线性微分方程解的性质与结构}
+
+
+\subsection*{1. 预备知识}
+\begin{itemize} 
+  \item [(1)] 线性相关与线性无关
+\paragraph{Def.} 设 $y_1(t), y_2(t), \ldots, y_n(t)$ 为定义在 $[a,b]$ 上的函数，  
+如果存在不全为 0 的常数 $C_1, C_2, \ldots, C_n$ 使得  
+\[
+C_1 y_1(t) + C_2 y_2(t) + \cdots + C_n y_n(t) \equiv 0, \quad \forall t \in [a,b],
+\]
+
+则称 $y_1(t), y_2(t), \ldots, y_n(t)$ 线性相关；否则称 $y_1(t), y_2(t), \ldots, y_n(t)$ 线性无关。
+
+\paragraph{Rem.} 
+\begin{enumerate}
+\item [(1)] 函数组的线性相关性依赖于定义区间。
+\paragraph{例：} $y_1(t)=|t|$, $y_2(t)=t$  
+它们在 $(-\infty,+\infty)$ 上线性无关，  
+在 $(0,+\infty)$ 上线性相关。
+
+\item [(2)] 两个函数 $y_1(t), y_2(t)$ 在 $[a,b]$ 上有定义，  
+则它们在 $[a,b]$ 上线性无关  
+$\Longleftrightarrow$  
+它们在 $[a,b]$ 上的比值 $y_1(t)/y_2(t)$ 不恒为常数。
+\end{enumerate}
+
+\paragraph{判定法则：}
+设 $y_1(t), \ldots, y_n(t)$ 在 $[a,b]$ 上线性相关，  
+则 $\exists$ 不全为 0 的常数 $C_1, C_2, \ldots, C_n$ 使得  
+\[
+\begin{cases}
+C_1 y_1(t) + \cdots + C_n y_n(t) = 0, \\
+C_1 y_1'(t) + \cdots + C_n y_n'(t) = 0, \\
+\quad \vdots \\
+C_1 y_1^{(n-1)}(t) + \cdots + C_n y_n^{(n-1)}(t) = 0.
+\end{cases}
+\]
+
+联立上述关于 $C_1, \ldots, C_n$ 的齐次线性方程组，  
+由方程组一定有非零解，  
+其系数行列式为 0，$\forall t \in [a,b]$。
+即：
+\[
+\begin{vmatrix}
+y_1(t) & y_2(t) & \cdots & y_n(t) \\
+y_1'(t) & y_2'(t) & \cdots & y_n'(t) \\
+\vdots & \vdots & & \vdots \\
+y_1^{(n-1)}(t) & y_2^{(n-1)}(t) & \cdots & y_n^{(n-1)}(t)
+\end{vmatrix}
+= 0, \quad \forall t \in [a,b].
+\]
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+\paragraph{Def.} 
+设函数 $y_1(t), \ldots, y_n(t)$ 在 $[a,b]$ 上有 $n-1$ 阶导数，则行列式
+\[
+W[y_1(t), \ldots, y_n(t)] \triangleq 
+\begin{vmatrix}
+y_1(t) & y_2(t) & \cdots & y_n(t) \\
+y_1'(t) & y_2'(t) & \cdots & y_n'(t) \\
+\vdots & \vdots & & \vdots \\
+y_1^{(n-1)}(t) & y_2^{(n-1)}(t) & \cdots & y_n^{(n-1)}(t)
+\end{vmatrix}
+\]
+
+称为函数组 $y_1(t), \ldots, y_n(t)$ 的 Wronsky 行列式。
+
+\paragraph{Thm 2.} 
+若 $y_1(t), y_2(t), \ldots, y_n(t)$ 在区间 $[a,b]$ 上线性相关，  
+则它们在 $[a,b]$ 上的 Wronsky 行列式恒为 0。
+
+\paragraph{Rem.} 
+定理的逆命题不成立。
+\paragraph{例：}  
+\[
+y_1(t) =
+\begin{cases}
+t^2, & -1 \le t < 0,\\
+0, & 0 \le t \le 1,
+\end{cases}
+\quad
+y_2(t) =
+\begin{cases}
+t^2, & 0 \le t \le 1,\\
+0, & -1 \le t < 0.
+\end{cases}
+\]
+在 $[-1,1]$ 上 $W(t) \equiv 0$，但在 $[-1,1]$ 上线性无关。
+
+\paragraph{Cor.} 
+若函数组 $y_1(t), y_2(t), \ldots, y_n(t)$ 的 Wronsky 行列式在 $[a,b]$ 上某一点 $t_0$ 处 $\neq 0$，  
+则 $W(t) \ne 0$，函数组在 $[a,b]$ 上线性无关。
+
+\paragraph{Thm 3.（叠加原理）}  
+若 $y_1(t), y_2(t), \ldots, y_n(t)$ 是齐次线性微分方程 (4.2) 的 $n$ 个解，  
+则 $C_1 y_1(t) + C_2 y_2(t) + \cdots + C_n y_n(t)$ 也是 (4.2) 的解，  
+其中 $C_1, C_2, \ldots, C_n$ 为任意常数。
+
+\paragraph{Rem.} 
+(1) 当 $k = n$ 时，方程 (4.2) 有解 $y = C_1 y_1(t) + \cdots + C_n y_n(t)$，  
+但不一定为通解。
+
+\subsection*{2. 齐次线性微分方程解的性质} 
+\paragraph{Thm 4.} 
+若方程 (4.2) 的解 $y_1(t), \ldots, y_n(t)$ 在 $[a,b]$ 上线性无关，  
+则
+\[
+W[y_1(t), \ldots, y_n(t)] \text{ 在 } [a,b] \text{ 上任何点都不等于 } 0, 
+\quad \text{即}\; W(t) \ne 0, \; \forall t \in [a,b].
+\]
+
+\paragraph{\proof} 
+若 $\exists t_0 \in [a,b]$ 使 $W(t_0)=0$，考虑 $C_1, C_2, \ldots, C_n$ 的齐次线性方程组：
+\[
+\begin{cases}
+C_1 y_1(t_0) + \cdots + C_n y_n(t_0) = 0, \\
+\vdots \\
+C_1 y_1^{(n-1)}(t_0) + \cdots + C_n y_n^{(n-1)}(t_0) = 0.
+\end{cases}
+\]
+
+且 $W(t_0)=0$，故方程组有非零解 $C_1, C_2, \ldots, C_n$。现以这些常数构造函数：
+\[
+y(t) \triangleq C_1 y_1(t) + C_2 y_2(t) + \cdots + C_n y_n(t), \quad t \in [a,b].
+\]
+
+下证 $y(t) \equiv 0$。由叠加原理知，$y(t)$ 是方程 (4.2) 的解。注意到
+\[
+y(t_0) = y'(t_0) = \cdots = y^{(n-1)}(t_0) = 0.
+\]
+
+注意到零解也满足上述式，则由解的存在唯一性定理，得
+\[
+y(t) \equiv 0, \quad \forall t \in [a,b].
+\]
+
+即 $\exists$ 不全为 0 的 $C_1, C_2, \ldots, C_n$ 使得
+\[
+C_1 y_1(t) + \cdots + C_n y_n(t) \equiv 0, \quad \forall t \in [a,b],
+\]
+
+与线性无关矛盾。
+
+\paragraph{Cor.} 设 $y_1(t), y_2(t), \ldots, y_n(t)$ 是方程 (4.2) 在 $[a,b]$ 上的 $n$ 个解，  
+若 $\exists t_0 \in [a,b]$ 使 $W(t_0)=0$，则 $y_1(t), y_2(t), \ldots, y_n(t)$ 线性相关。
+
+\paragraph{Cor.} 方程 (4.2) 的 $n$ 个解 $y_1(t), y_2(t), \ldots, y_n(t)$ 在 $[a,b]$ 上线性无关  
+$\Longleftrightarrow \exists t_0 \in [a,b]$ 使 $W(t_0) \ne 0$。
+
+\subsection*{3. 齐次线性微分方程通解的结构} 
+\paragraph{Thm 5.} 
+$n$ 阶齐次线性微分方程 (4.2) 一定存在 $n$ 个线性无关的解。
+
+\paragraph{\proof} 
+由存在唯一性定理知，方程 (4.2) 的解 $y(t)$ 满足以下初始条件：
+\[
+y_1(t_0) = 1,  y_1'(t_0)=0,  \cdots,  y_1^{(n-1)}(t_0)=0
+\]
+\[
+y_2(t_0) = 0,  y_2'(t_0)=1,  \cdots,  y_2^{(n-1)}(t_0)=0
+\]
+\[
+\vdots 
+\]
+\[
+y_n(t_0) = 0,  y_n'(t_0)=0,  \cdots,  y_n^{(n-1)}(t_0)=1
+\]
+
+由解的唯一性定理，$n$ 个解 $y_1(t), y_2(t), \ldots, y_n(t)$ 一定存在且不相等
+
+
+又因为 $W[y_1(t_0), y_2(t_0), \ldots, y_n(t_0)] = W(t_0) = 1 \ne 0$，  
+故 $y_1(t), y_2(t), \ldots, y_n(t)$ 在 $[a,b]$ 上线性无关。
+
+\paragraph{Thm 6.（齐次线性微分方程通解的结构定理）}  
+若 $y_1(t), y_2(t), \ldots, y_n(t)$ 是方程 (4.2) 的 $n$ 个线性无关的解，  
+则方程通解可表示为
+\[
+y = C_1 y_1(t) + C_2 y_2(t) + \cdots + C_n y_n(t) \tag{*}
+\]
+
+其中 $C_1, C_2, \ldots, C_n$ 为任意常数，且 (*) 包含方程 (4.2) 的所有解。
+
+\paragraph{\proof}
+(1) 由叠加原理，(*) 是方程 (4.2) 的解，包含 $n$ 个任意常数。\\
+(2) 又因为
+\[
+\begin{vmatrix}
+\dfrac{\partial y}{\partial C_1} & \cdots & \dfrac{\partial y}{\partial C_n} \\[6pt]
+\dfrac{\partial y'}{\partial C_1} & \cdots & \dfrac{\partial y'}{\partial C_n} \\[6pt]
+\vdots & & \vdots \\[6pt]
+\dfrac{\partial y^{(n-1)}}{\partial C_1} & \cdots & \dfrac{\partial y^{(n-1)}}{\partial C_n}
+\end{vmatrix}
+=
+\begin{vmatrix}
+y_1(t) & \cdots & y_n(t) \\
+y_1'(t) & \cdots & y_n'(t) \\
+\vdots & & \vdots \\
+y_1^{(n-1)}(t) & \cdots & y_n^{(n-1)}(t)
+\end{vmatrix}
+= W(t) \ne 0
+\]
+
+故 $C_1, C_2, \ldots, C_n$ 相互独立，  
+因此 (*) 式为通解，下证 (*) 包含所有解。
+
+由解的存在唯一性定理，唯一解取决于初始条件：
+\[
+y(t_0) = y_0, \quad y'(t_0) = y_0', \quad y^{(n-1)}(t_0) = y_0^{(n-1)}.
+\]
+
+能唯一确定 (*) 中常数 $C_1, C_2, \ldots, C_n$。
+令 (*) 式满足该初始值，
+\[
+\begin{cases}
+C_1 y_1(t_0) + \cdots + C_n y_n(t_0) = y_0, \\
+C_1 y_1'(t_0) + \cdots + C_n y_n'(t_0) = y_0', \\
+\quad \vdots \\
+C_1 y_1^{(n-1)}(t_0) + \cdots + C_n y_n^{(n-1)}(t_0) = y_0^{(n-1)}.
+\end{cases}
+\]
+
+其系数行列式
+\[
+\begin{vmatrix}
+y_1(t_0) & \cdots & y_n(t_0) \\
+y_1'(t_0) & \cdots & y_n'(t_0) \\
+\vdots & & \vdots \\
+y_1^{(n-1)}(t_0) & \cdots & y_n^{(n-1)}(t_0)
+\end{vmatrix}
+= W(t_0) \ne 0
+\]
+
+因此方程组有唯一解 $C_1, C_2, \ldots, C_n$，  
+因此 $C_1 y_1(t) + \cdots + C_n y_n(t)$ 为满足方程初始值的解。
+
+\paragraph{例1}  
+$y'' + y = 0$ 
+\paragraph{解1}  
+显然，$y_1 = \cos t, \; y_2 = \sin t$ 是方程两线性无关的解。
+通解为
+\[
+y = C_1 \cos t + C_2 \sin t, \quad C_1, C_2 \text{ 为任意常数。}
+\]
+
+
+
+\paragraph{例：} 
+$y = e^{\pm i t}$，代入方程 $y'' + y = 0$，得特征方程 $\lambda^2 + 1 = 0$，  
+$\lambda = \pm i$，$y = e^{i t}, y = e^{-i t}$ 是方程的解。\\
+由欧拉公式知，$y_1 = \cos t, \; y_2 = \sin t$ 都是解。
+
+\paragraph{Cor.} 
+方程 (4.2) 线性无关解的最大个数为 $n$。
+
+\paragraph{Cor.} 
+$n$ 阶齐次线性微分方程的所有解构成一个 $n$ 维线性空间。
+
+\paragraph{Rem.} 
+方程 (4.2) 的一组 $n$ 个线性无关解称为方程的一个 \textbf{基本解组}。当 $W(t_0) \ne 0$ 时，称为标准基本解组。
+
+\paragraph{Thm 7.} 
+设 $y_1(t), y_2(t), \ldots, y_n(t)$ 是方程 (4.2) 的解，则 TFAE：  
+\begin{enumerate}[(1)]
+  \item 方程 (4.2) 的通解是 $y(t) = C_1 y_1(t) + \cdots + C_n y_n(t)$；
+  \item $y_1(t), y_2(t), \ldots, y_n(t)$ 是方程 (4.2) 的一个基本解组；
+  \item $y_1(t), y_2(t), \ldots, y_n(t)$ 线性无关；
+  \item 在 $(a,b)$ 上有一点处 Wronsky 行列式 $W(t) \ne 0$（任一点也不为 0）。
+\end{enumerate}
+
+\paragraph{例（Liouville 公式）}
+设 $y_1(t), y_2(t), \ldots, y_n(t)$ 为方程 (4.2) 的任意 $n$ 个解，  
+这 $n$ 个解构成的 Wronsky 行列式为 $W(t)$。证明：$W(t)$ 满足一阶方程
+\[
+W'(t) + a_1(t) W(t) = 0,
+\]
+且对定义区间 $[a,b]$ 上任一点 $t_0$ 有
+\[
+W(t) = W(t_0) \, e^{-\int_{t_0}^{t} a_1(s)\,ds}, \quad t_0, t \in [a,b].
+\]
+
+\section*{三、非齐次线性微分方程的性质与结构}
+\[
+y^{(n)}(t) + a_1(t)y^{(n-1)}(t) + \cdots + a_n(t)y(t) = f(t) \tag{4.1}
+\]
+
+\subsection*{1. 解的性质}
+\begin{enumerate}[(1)]
+  \item 若 $y_1(t)$ 是非齐次方程 (4.1) 的解，$y_2(t)$ 是相应齐次方程 (4.2) 的解，  
+  则 $y_1(t) + y_2(t)$ 也是非齐次方程 (4.1) 的解。
+  \item 方程 (4.1) 的任意两个解之差一定是相应齐次方程 (4.2) 的解。
+  \item （由叠加原理）若 $y_i(t)$ 分别是非齐次方程的解：
+  \[
+  y^{(n)}(t) + a_1(t)y^{(n-1)}(t) + \cdots + a_n(t)y(t) = f_i(t), \quad i=1,2,
+  \]
+  则 $y(t) = c_1 y_1(t) + c_2 y_2(t)$ 是
+  \[
+  y^{(n)}(t) + a_1(t)y^{(n-1)}(t) + \cdots + a_n(t)y(t) = c_1 f_1(t) + c_2 f_2(t)
+  \]
+  的解。
+\end{enumerate}
+
+
+
+
+
+
+
+
+\subsection*{2. 解的结构}
+
+\paragraph{Thm 8.} 
+设 $y_1(t), y_2(t), \ldots, y_n(t)$ 为相应齐次方程 (4.2) 的基本解组，  
+若 $y_p(t)$ 是非齐次方程 (4.1) 的某一特解，则非齐次方程 (4.1) 的通解可表示为
+\[
+y(t) = C_1 y_1(t) + C_2 y_2(t) + \cdots + C_n y_n(t) + y_p(t) \tag{**}
+\]
+其中 $C_1, C_2, \ldots, C_n$ 为任意常数，且通解包含方程 (4.1) 的所有解。
+
+\paragraph{\proof}
+
+(1) 由叠加原理，$y(t) = C_1 y_1(t) + \cdots + C_n y_n(t) + y_p(t)$ 是方程 (4.1) 的解，  
+包含 $n$ 个任意常数。由 Thm 6. 知，$n$ 个任意常数相互独立，故为通解。
+
+(2) 设 $y(t)$ 是方程 (4.1) 的任一解。由性质 (2)，  
+$y(t) - y_p(t) = \tilde{C}_1 y_1(t) + \cdots + \tilde{C}_n y_n(t)$ 是齐次方程 (4.2) 的解。
+
+由 Thm 6. 知，$\exists$ 唯一常数 $\tilde{C}_1, \tilde{C}_2, \ldots, \tilde{C}_n$ 使得
+\[
+y(t) - y_p(t) = \tilde{C}_1 y_1(t) + \cdots + \tilde{C}_n y_n(t).
+\]
+
+即方程 (4.1) 的任一解可由 (**) 表示。  
+由 $y(t)$ 的任意性，(**) 包含方程 (4.1) 的所有解。
+
+\subsection*{3. 常数变易法}
+
+设 $y_1(t), y_2(t), \ldots, y_n(t)$ 是方程 (4.2) 的基本解组，  
+因而
+\[
+y(t) = C_1 y_1(t) + C_2 y_2(t) + \cdots + C_n y_n(t) \tag{*}
+\]
+
+是齐次方程 (4.2) 的通解。
+
+令
+\[
+y(t) = C_1(t) y_1(t) + C_2(t) y_2(t) + \cdots + C_n(t) y_n(t)
+\]
+
+是非齐次方程 (4.1) 的解，其中 $C_i(t)$ ($i=1,2,\ldots,n$) 是待定函数。
+求导有：
+\[
+y'(t) = C_1'(t)y_1(t) + C_2'(t)y_2(t) + \cdots + C_n'(t)y_n(t)
++ C_1(t)y_1'(t) + C_2(t)y_2'(t) + \cdots + C_n(t)y_n'(t)
+\]
+
+令
+\[
+\sum_{i=1}^{n} C_i'(t)y_i(t) = 0,
+\]
+
+有
+\[
+y'(t) = C_1'(t)y_1(t) + C_2'(t)y_2(t) + \cdots + C_n'(t)y_n(t)
++ C_1(t)y_1'(t) + C_2(t)y_2'(t) + \cdots + C_n(t)y_n'(t). \tag{*1}
+\]
+
+令
+\[
+\sum_{i=1}^{n} C_i'(t)y_i(t) = 0,
+\]
+
+则有
+\[
+y'(t) = C_1(t)y_1'(t) + C_2(t)y_2'(t) + \cdots + C_n(t)y_n'(t). \tag{*2}
+\]
+
+继续对 $t$ 求导得
+\[
+y''(t) = C_1'(t)y_1'(t) + C_2'(t)y_2'(t) + \cdots + C_n'(t)y_n'(t)
++ C_1(t)y_1''(t) + C_2(t)y_2''(t) + \cdots + C_n(t)y_n''(t),
+\]
+
+依次类推：
+\[
+y^{(n-1)}(t) = C_1'(t)y_1^{(n-2)}(t) + \cdots + C_n'(t)y_n^{(n-2)}(t)
++ C_1(t)y_1^{(n-1)}(t) + \cdots + C_n(t)y_n^{(n-1)}(t). \tag{*{(n-1)}}
+\]
+
+对上式再对 $t$ 求导得：
+\[
+y^{(n)}(t) = C_1'(t)y_1^{(n-1)}(t) + \cdots + C_n'(t)y_n^{(n-1)}(t)
++ C_1(t)y_1^{(n)}(t) + \cdots + C_n(t)y_n^{(n)}(t). \tag{*n}
+\]
+
+将 $(*)$、$(**1)$、$\cdots$、$(*n)$ 代入方程 (4.1)，并注意到  
+$y_1(t), \ldots, y_n(t)$ 是方程 (4.2) 的解，因此有：
+\[
+y_1^{(n)}(t)C_1'(t) + \cdots + y_n^{(n)}(t)C_n'(t) = f(t).
+\]
+
+于是得到关于未知函数 $C_i'(t)$ ($i=1,\ldots,n$) 的 $n$ 个方程组：
+\[
+\begin{cases}
+y_1(t)C_1'(t) + \cdots + y_n(t)C_n'(t) = 0, \\
+y_1'(t)C_1'(t) + \cdots + y_n'(t)C_n'(t) = 0, \\
+\vdots \\
+y_1^{(n-1)}(t)C_1'(t) + \cdots + y_n^{(n-1)}(t)C_n'(t) = f(t).
+\end{cases}
+\]
+
+其系数行列式 $W(t) \ne 0$，方程组有唯一解：
+\[
+C_i'(t) = \varphi_i(t), \quad i=1,2,\ldots,n.
+\]
+
+因此
+\[
+C_i(t) = \int \varphi_i(t)\,dt + \delta_i, \quad i=1,2,\ldots,n.
+\]
+
+代入有：
+\[
+y(t) = \sum_{i=1}^{n} \left( \int \varphi_i(t)\,dt + \delta_i \right) y_i(t)
+= \sum_{i=1}^{n} \int \varphi_i(t)y_i(t)\,dt + \sum_{i=1}^{n} \delta_i y_i(t).
+\]
+
+其中第二项为齐次解，第一项为非齐次方程的一个特解。
+
+\paragraph{例1} 求方程 $y'' + y = \dfrac{1}{\cos t}$ 的通解。
+
+\paragraph{解1} 其齐次方程 $y'' + y = 0$。齐次解为 $y = C_1 \cos t + C_2 \sin t$。设 $y = C_1(t)\cos t + C_2(t)\sin t$，则可得：
+\[
+\begin{cases}
+\cos t\, C_1'(t) + \sin t\, C_2'(t) = 0,\\
+-\sin t\, C_1'(t) + \cos t\, C_2'(t) = \dfrac{1}{\cos t}.
+\end{cases}
+\]
+
+解得
+\[
+C_1'(t) = -\tan t, \quad C_2'(t) = 1.
+\]
+
+从而
+\[
+C_1(t) = \ln |\cos t| + \delta_1, \quad C_2(t) = t + \delta_2.
+\]
+
+原方程通解为
+\[
+y = (\ln |\cos t| + \delta_1)\cos t + (t + \delta_2)\sin t
+= \delta_1 \cos t + \delta_2 \sin t + \ln |\cos t|\cos t + t\sin t,
+\]
+其中 $\delta_1, \delta_2$ 为任意常数。
+
+\paragraph{例2} 求方程 $tx'' - x' = t^2$ 在$t \neq 0$ 上的所有解。
+
+\paragraph{解2}  
+(1) 齐次方程 $x'' - \frac{1}{t}x' = 0$，$x'=C_1t, x=\frac{1}{2}C_1t^2+C_2$。 基本解组为 $1,\, t^2$，通解为 $y = C_1 + C_2t^2.$
+
+(2) 非齐次方程 $x'' - \frac{1}{t}x' = t$。\\
+设 $x(t) = C_1(t) + C_2(t)t^2$，则有
+\[
+\begin{cases}
+C_1'(t) + t ^2C_2'(t) = 0, \\
+0 \cdot C_1'(t) + 2t \cdot C_2'(t) = t,
+\end{cases}
+\]
+
+即
+\[
+C_1(t) = -\frac{1}{6} t^3+\delta_1, \qquad C_2'(t) = \frac{1}{2}t + \delta_2.
+\]
+
+原方程通解为
+\[
+x =  -\tfrac{1}{6}t^3 + \delta_1 + \left(\tfrac{1}{2}t + \delta_2\right)t^2
+= \delta_1 + \delta_2 t + \tfrac{1}{3}t^3,
+\]
+
+其中 $\delta_1, \delta_2$ 为任意常数。
+
+
+
+
+\mysection{§4.2 常系数线性微分方程的解法}
+\section*{一、复值函数与复值解}
+
+\subsection*{1. 复值函数}
+
+\paragraph{Def.}
+若 $\forall t \in [a,b]$，根据某种关系 $\exists!$ 复数
+\[
+z(t) = \varphi(t) + i \psi(t),
+\]
+其中 $\varphi(t), \psi(t)$ 是定义在 $[a,b]$ 上的实函数，  
+则称 $z(t) = \varphi(t) + i\psi(t)$ 是定义在 $[a,b]$ 上的复值函数。
+
+\paragraph{Def.}
+若 $\varphi(t), \psi(t)$ 在 $t \to t_0$ 时有极限，  
+则称复值函数 $z(t)$ 在 $t \to t_0$ 时有极限，且定义：
+\[
+\lim_{t \to t_0} z(t)
+= \lim_{t \to t_0} \varphi(t) + i \lim_{t \to t_0} \psi(t).
+\]
+
+
+\paragraph{Def.}
+若 $\lim_{t \to t_0} z(t) = z(t_0)$，则称 $z(t)$ 在 $t_0$ 处连续。
+
+\paragraph{Rem.}
+已知实函数连续，则类似地复值函数的区间连续性同理成立。
+
+\paragraph{Def.}
+若
+$
+\lim_{t \to t_0} \frac{z(t) - z(t_0)}{t - t_0}
+$
+存在，则称 $z(t)$ 在 $t_0$ 可微，记为
+$
+\frac{dz}{dt}\bigg|_{t=t_0} = z'(t_0).
+$
+
+
+\paragraph{Rem.}
+类似可定义区间可微与高阶导数。设 $z_1(t), z_2(t)$ 在 $[a,b]$ 上可微，$C$ 为复值常数，则：
+\begin{enumerate}
+  \item $\displaystyle 
+  \frac{d}{dt} [z_1(t) + z_2(t)]
+  = \frac{d}{dt} z_1(t) + \frac{d}{dt} z_2(t).$
+  
+  \item $\displaystyle 
+  \frac{d}{dt} [z_1(t) z_2(t)]
+  = \frac{d}{dt} z_1(t) \cdot z_2(t)
+  + \frac{d}{dt} z_2(t) \cdot z_1(t).$
+  
+  \item $\displaystyle 
+  \frac{d}{dt} [C \cdot z(t)]
+  = C \cdot \frac{d}{dt}z(t).$
+\end{enumerate}
+
+
+\subsection*{2. 复指数函数（记为 $e^{kt}$，$k$ 是复值常数）}
+
+\paragraph{Def.}
+设 $k = \alpha + i\beta$ 是任一复数（$\alpha, \beta \in \mathbb{R}$），
+$t \in [a,b], (\alpha, \beta \in \mathbb{R})$，则称
+\[
+e^{kt} = e^{(\alpha + i\beta)t}
+= e^{\alpha t}(\cos \beta t + i \sin \beta t)
+\]
+
+为定义在区间 $[a,b]$ 上的复指数函数。
+
+\paragraph{Rem.}
+\begin{itemize}
+\item[(1)]
+由定义有
+$
+\cos \beta t = \tfrac{1}{2}(e^{i\beta t} + e^{-i\beta t}), \quad
+\sin \beta t = \tfrac{1}{2i}(e^{i\beta t} - e^{-i\beta t}).
+$
+
+\item[(2)] 复指数函数具有复值函数的类似性质。
+\begin{enumerate}
+  \item $\displaystyle e^{\overline{k}t} = \overline{e^{kt}};$
+
+  \item $\displaystyle e^{(a+b)t} = e^{at} \cdot e^{bt};$
+
+  \item $\displaystyle \frac{d}{dt}\left(e^{kt}\right) = k e^{kt}, \quad
+  \frac{d^n}{dt^n}\left(e^{kt}\right) = k^n e^{kt}.$
+\end{enumerate}
+\end{itemize}
+
+
+\subsection*{3. 复值解}
+
+\paragraph{Def.}
+若 $[a,b]$ 上的复值函数 $y = z(t)$ 满足方程
+\[
+\frac{d^n z(t)}{dt^n} + a_1(t)\frac{d^{n-1}z(t)}{dt^{n-1}} + \cdots + a_n(t)z(t) = f(t),
+\]
+
+则称 $z(t)$ 为方程 (4.1) 的复值解。
+
+\paragraph{Thm. 1}
+若 齐次方程 (4.1) 中所有系数 $a_i(t)$ ($i=1,2,\ldots,n$) 是实值函数，  
+而 $z = \varphi(t) + i\psi(t)$ 是方程 (4.2) 的复值解，  
+则函数 $\varphi(t), \psi(t)$ 和复值共轭函数$\bar{z}(t)$都是该方程的实值解。
+
+\paragraph{Thm. 2}
+若方程
+\[
+\frac{d^n z(t)}{dt^n} + a_1(t)\frac{d^{n-1}z(t)}{dt^{n-1}} + \cdots + a_n(t)z(t)
+= u(t) + i v(t)
+\]
+
+有复值解 $U(t) + iV(t)$，其中 $a_i(t)$ ($i=1,2,\ldots,n$)、$u(t)$、$v(t)$、$U(t)$、$V(t)$
+均是实值函数，则 $U(t)$ 和 $V(t)$ 分别是方程
+\[
+\frac{d^n y(t)}{dt^n} + a_1(t)\frac{d^{n-1}y(t)}{dt^{n-1}} + \cdots + a_n(t)y(t) = u(t)
+\]
+
+和方程
+\[
+\frac{d^n y(t)}{dt^n} + a_1(t)\frac{d^{n-1}y(t)}{dt^{n-1}} + \cdots + a_n(t)y(t) = v(t)
+\]
+
+的解。
+
+\section*{二、n 阶常系数齐次线性微分方程}
+
+\subsection*{1. 形式}
+\[
+L[y] = \frac{d^n y}{dt^n}
++ a_1 \frac{d^{n-1}y}{dt^{n-1}}
++ \cdots + a_n y = 0, \tag{$\ast$}
+\]
+
+其中 $a_1, a_2, \ldots, a_n$ 为常数。
+
+\paragraph{Rem.} 设线性微分算子
+\[
+L = a_0 \frac{d^n}{dt^n} + a_1 \frac{d^{n-1}}{dt^{n-1}} + \cdots + a_{n-1} \frac{d}{dt} + a_n
+\]
+
+\subsection*{2. 解法（Euler 待定指数函数法）}
+
+\begin{itemize}
+  \item[(1)]若
+\[
+\frac{dx}{dt} + a x = 0,
+\]
+
+则令 $x = e^{\lambda t}$，得 $\lambda = -a$，通解为 $y = C e^{-at}$。
+
+\item[(2)]对于一般方程 $L[x] = 0$，设 $x = e^{\lambda t}$，则
+\[
+L[e^{\lambda t}] = (\lambda^n + a_1 \lambda^{n-1} + \cdots + a_{n-1}\lambda + a_n)e^{\lambda t} = 0.
+\]
+
+即
+\[
+\lambda^n + a_1 \lambda^{n-1} + \cdots + a_{n-1}\lambda + a_n = 0 \triangleq F(\lambda)
+\]
+
+称为\textbf{特征方程}。若 $x = e^{\lambda t}$ 是方程 $(\ast)$ 的解，当且仅当 $\lambda$ 是方程 $F(\lambda)=0$ 的根。
+
+\item[Rem.]
+$F(\lambda)=0$ 的根 $\lambda_i$ 称为方程 $(\ast)$ 的\textbf{特征根}。
+\end{itemize}
+
+\paragraph{(1) 特征根为互异实根的情形}
+
+\begin{enumerate}
+  \item [①] 设 $\lambda_1,\lambda_2,\ldots,\lambda_n$ 是 $n$ 个不等实根，则方程 $(\ast)$ 有如下 $n$ 个解：
+\[
+e^{\lambda_1 t}, \; e^{\lambda_2 t}, \; \ldots, \; e^{\lambda_n t}.
+\]
+
+其中它们的 Wronsky 行列式为：
+\[
+W[e^{\lambda_1 t}, e^{\lambda_2 t}, \ldots, e^{\lambda_n t}]
+= 
+\begin{vmatrix}
+e^{\lambda_1 t} & e^{\lambda_2 t} & \cdots & e^{\lambda_n t} \\
+\lambda_1 e^{\lambda_1 t} & \lambda_2 e^{\lambda_2 t} & \cdots & \lambda_n e^{\lambda_n t} \\
+\vdots & \vdots & \ddots & \vdots \\
+\lambda_1^{n-1} e^{\lambda_1 t} & \lambda_2^{n-1} e^{\lambda_2 t} & \cdots & \lambda_n^{n-1} e^{\lambda_n t}
+\end{vmatrix}
+= e^{(\lambda_1 + \cdots + \lambda_n)t} \prod_{1 \le i < j \le n} (\lambda_j - \lambda_i) \ne 0.
+\]
+
+因此上述 $n$ 个解\textbf{线性无关}。
+
+
+(a) 若 $\lambda_i (i=1,2,\ldots,n)$ 都是实数，则方程 $(\ast)$ 的通解可表示为：
+\[
+x(t) = C_1 e^{\lambda_1 t} + C_2 e^{\lambda_2 t} + \cdots + C_n e^{\lambda_n t},
+\]
+
+其中 $C_1,C_2,\ldots,C_n$ 为任意常数。
+
+
+(b) 若 $\lambda_i$ 有复数，则复根总成对出现。  
+设 $\lambda_1 = \alpha + i\beta$ 是特征根，则 $\lambda_2 = \alpha - i\beta$ 也是特征根。  
+对应的两个复值解为：
+\[
+e^{\lambda_1 t} = e^{(\alpha + i\beta)t} = e^{\alpha t} (\cos \beta t + i\sin \beta t),
+\]
+\[
+e^{\lambda_2 t} = e^{(\alpha - i\beta)t} = e^{\alpha t} (\cos \beta t - i\sin \beta t).
+\]
+
+
+由 Thm.1 知，$e^{\alpha t}\sin \beta t,\; e^{\alpha t}\cos \beta t$ 也是方程 $(\ast)$ 的解。  
+因此最终有基本解组，可写出通解。
+
+\paragraph{例 1}
+\[
+\frac{d^4 x}{dt^4} - x = 0
+\]
+\paragraph{解1}
+特征方程为 $\lambda^4 - 1 = 0 \;\Rightarrow\; \lambda^4 = 1$。  
+特征根 $\lambda = \pm 1, \pm i$。
+
+基本解组：$\cos t,\; \sin t,\; e^{t},\; e^{-t}$。  
+通解为：
+\[
+x = C_1 \cos t + C_2 \sin t + C_3 e^{t} + C_4 e^{-t}.
+\]
+
+
+\paragraph{例 2}
+\[
+x'' = 0
+\]
+
+\paragraph{解2}
+特征方程 $\lambda^2 = 0$，得 $\lambda_1 = \lambda_2 = 0$。  
+基本解组：$1,\; t$。  
+通解为：
+\[
+x = C_1 + C_2 t.
+\]
+
+
+\paragraph{例 3}
+\[
+x'' - 2x' + x = 0
+\]
+
+\paragraph{解3}
+特征根 $\lambda_1 = \lambda_2 = 1$。  
+令 $x = y e^{t}$，则 $x' = y' e^{t} + y e^{t},\; x'' = y'' e^{t} + 2y' e^{t} + y e^{t}$。  
+代入原方程得 $y'' = 0$，  
+因此有两个基本解 $e^{t},\; t e^{t}$。  
+通解为：
+\[
+x = C_1 e^{t} + C_2 t e^{t}.
+\]
+
+
+\item[(2)] 特征根有重根的情形
+
+设特征方程有 $k$ 重根 $\lambda_1$，则有：
+\[
+F(\lambda_1) = F'(\lambda_1) = \cdots = F^{(k-1)}(\lambda_1) = 0, \quad F^{(k)}(\lambda_1) \ne 0.
+\]
+
+① 若 $\lambda_1 = 0$，则特征方程有因子 $\lambda^k$，于是  
+\[
+a_n = a_{n-1} = \cdots = a_{n-k+1} = 0, \quad a_{n-k} \ne 0.
+\]
+
+特征方程为
+\[
+\lambda^n + a_1 \lambda^{n-1} + \cdots + a_{n-k}\lambda^k = 0,
+\]
+
+对应的微分方程为
+\[
+\frac{d^n x}{dt^n} + a_1 \frac{d^{n-1} x}{dt^{n-1}} + \cdots + a_{n-k} \frac{d^k x}{dt^k} = 0.
+\]
+
+上式方程的解为 $1, t, \ldots, t^{k-1}$。  
+故特征方程的 $k$ 重根对应方程 $L[x]=0$ 的 $k$ 个线性无关解。
+
+② 设 $\lambda_1 \ne 0$，作变换 $x = y e^{\lambda t}$，  
+则
+\[
+x^{(m)} = y^{(m)} e^{\lambda t} + m \lambda y^{(m-1)} e^{\lambda t} + \cdots + \lambda^m y e^{\lambda t}.
+\]
+
+可得
+\[
+L[x] = \left[\frac{d^n y}{dt^n} + b_1 \frac{d^{n-1}y}{dt^{n-1}} + \cdots + b_n y \right] e^{\lambda t}
+\triangleq L_1[y] e^{\lambda t}.
+\]
+
+于是方程化为
+\[
+L_1[y] = \frac{d^n y}{dt^n} + b_1 \frac{d^{n-1}y}{dt^{n-1}} + \cdots + b_n y = 0,
+\]
+
+其中 $b_1,b_2,\ldots,b_n$ 为常数，对应特征方程为：
+\[
+\mu^n + b_1 \mu^{n-1} + \cdots + b_n = 0 \triangleq G(\mu).
+\]
+
+
+由
+\[
+\begin{cases}
+L[e^{\lambda t}] = F(\lambda) e^{\lambda t}, \\
+L[e^{\mu t} e^{\lambda t}] = L_1[e^{\mu t}]e^{\lambda_1 t},\\
+L_1[e^{\mu t}]=G(\mu)e^{(\mu)t},
+\end{cases}
+\]
+
+可得
+\[
+F(\mu+\lambda_1)e^{(\mu+\lambda_1)t} = G(\mu)e^{(\mu+\lambda_1)t}.
+\]
+
+即当 $\lambda = \lambda_1$ 对应于新方程中的零根时，其根的重数相同。  
+因此对应于原特征方程的 $k$ 重根 $\lambda_1$，方程的独立解为：
+\[
+e^{\lambda_1 t},\; t e^{\lambda_1 t},\; \ldots,\; t^{k-1} e^{\lambda_1 t}.
+\]
+
+同理，若特征方程有其他根 $\lambda_2, \lambda_3, \ldots, \lambda_m$，重数依次为
+$k_2,k_3,\ldots,k_m$，且 $k_1 + k_2 + \cdots + k_m = n$，
+则方程 $(\ast)$ 对应的解为：
+\[
+e^{\lambda_1 t},\; t e^{\lambda_1 t},\; \ldots,\; t^{k_1-1} e^{\lambda_1 t},
+\]
+\[
+e^{\lambda_2 t},\; t e^{\lambda_2 t},\; \ldots,\; t^{k_2-1} e^{\lambda_2 t},\; 
+\]
+\[
+\vdots 
+\]
+\[
+e^{\lambda_m t},\; t e^{\lambda_m t},\; \ldots,\; t^{k_m-1} e^{\lambda_m t},\; 
+\]
+
+上述解线性无关，因而构成基本解组。
+
+
+若有 $k$ 重复复根 $\lambda = \alpha + i\beta$，则 $\overline{\lambda} = \alpha - i\beta$ 也是 $k$ 重根。  
+对应的实值线性无关解为：
+\[
+e^{\alpha t}\cos\beta t,\; t e^{\alpha t}\cos\beta t,\; \ldots,\; t^{k-1} e^{\alpha t}\cos\beta t,
+\]
+\[
+e^{\alpha t}\sin\beta t,\; t e^{\alpha t}\sin\beta t,\; \ldots,\; t^{k-1} e^{\alpha t}\sin\beta t.
+\]
+
+
+
+\paragraph{Thm. 3}
+若方程 $(\ast)$ 的特征方程为
+\[
+F(\lambda) = \lambda^n + a_1 \lambda^{n-1} + \cdots + a_n \lambda + a_n = (\lambda - \lambda_1)^{n_1} \cdots (\lambda - \lambda_r)^{n_r},
+\]
+
+其中 $\lambda_1, \lambda_2, \ldots, \lambda_r$ 是互异的特征根，重数分别为 $n_1, n_2, \ldots, n_r$ ($n_i \ge 1$)，  
+且 $n_1 + n_2 + \cdots + n_r = n$，  
+则对应的 $n$ 个线性无关的解为
+\[
+e^{\lambda_1 t},\; t e^{\lambda_1 t},\; \ldots,\; t^{n_1 - 1} e^{\lambda_1 t};
+\]
+\[
+e^{\lambda_2 t},\; t e^{\lambda_2 t},\; \ldots,\; t^{n_2 - 1} e^{\lambda_2 t};
+\]
+\[
+\quad \ldots
+\]
+\[
+e^{\lambda_r t},\; t e^{\lambda_r t},\; \ldots,\; t^{n_r - 1} e^{\lambda_r t}.
+\]
+
+上述 $n$ 个解构成方程的一组基本解组。
+
+
+
+
+
+\end{enumerate}
+
+
+
+\subsection*{3. 求解齐次常系数线性微分方程的一般步骤}
+\begin{enumerate}
+  \item 写出特征方程的根 $\lambda_1, \lambda_2, \ldots, \lambda_n$；
+  \item 写出每个根对应的解；
+  \item 组合所有解得方程的通解。
+\end{enumerate}
+
+
+\paragraph{例 4}
+\[
+\frac{d^3 x}{dt^3} - x = 0
+\]
+\paragraph{解4}
+特征方程为 $\lambda^3 - 1 = 0$，  
+得 $\lambda = 1$（重根），$\lambda = -\frac{1}{2} + \frac{\sqrt{3}}{2}i$，$\lambda = -\frac{1}{2} - \frac{\sqrt{3}}{2}i$。  
+
+因此，通解为：
+\[
+x = C_1 e^{t} + e^{-\frac{1}{2}t}(C_2 \cos(\frac{\sqrt{3}}{2}t) + C_3 \sin(\frac{\sqrt{3}}{2}t),
+\]
+
+其中 $C_1, C_2, C_3$ 为任意常数。
+
+
+
+\paragraph{例5}
+\[
+\frac{d^3 x}{dt^3} - 3 \frac{d^2 x}{dt^2} + 3 \frac{dx}{dt} - x = 0
+\]
+\paragraph{解5}
+特征方程 $\lambda^3 - 3\lambda^2 + 3\lambda - 1 = 0$，  
+得 $\lambda_1 = \lambda_2 = \lambda_3 = 1$。  
+
+通解为：
+\[
+x = e^{t}(C_1 + C_2 t + C_3 t^2),
+\]
+其中 $C_1, C_2, C_3$ 为任意常数。
+
+
+
+\paragraph{例6(1)}
+$\displaystyle \frac{d^4 x}{dt^4} + 2\frac{d^2 x}{dt^2} +x= 0$，  
+\paragraph{解6(1)}
+$
+x = C_1 \cos t + C_2 \sin t + t (C_3 \cos t + C_4 \sin t),
+$
+\paragraph{例6(2)}$\displaystyle \frac{d^5 x}{dt^5} + 4\frac{d^3 x}{dt^3} + 4\frac{d x}{dt} = 0$，  
+\paragraph{解6(2)}
+$
+x = C_1 + C_2 \cos\sqrt{2} t + C_3 \sin \sqrt{2}t
++C_4t \cos\sqrt{2}t + C_5 t\sin \sqrt{2}t,
+\text{其中 $C_i$ 为任意常数。}$
+
+
+\paragraph{考虑方程}
+\[
+x^2 \frac{d^2 y}{dx^2} - x \frac{dy}{dx} + y = 0
+\]
+\paragraph{解答}
+令 $x = e^t$，则 $t = \ln x$。
+
+\[
+\frac{dy}{dx} = \frac{dy}{dt} \cdot \frac{dt}{dx} = \frac{1}{x} \frac{dy}{dt},
+\quad
+\frac{d^2 y}{dx^2} = \frac{d}{dx} \left(\frac{1}{x} \frac{dy}{dt}\right)
+= \frac{1}{x} \frac{d}{dt} \left(\frac{1}{x} \frac{dy}{dt}\right)
+= \frac{1}{x^2} \left(\frac{d^2 y}{dt^2} - \frac{dy}{dt}\right).
+\]
+
+代入原方程得：
+\[
+\frac{d^2 y}{dt^2} - 2 \frac{dy}{dt} + y = 0.
+\]
+
+其通解为：
+\[
+y = (C_1 + C_2 t)e^{t}.
+\]
+
+
+\paragraph{Cor.}
+一般情形的 Euler 方程为：
+\[
+x^n \frac{d^n y}{dx^n} + a_1 x^{n-1} \frac{d^{n-1}y}{dx^{n-1}} + \cdots + a_{n-1}x \frac{dy}{dx} + a_n y = 0.
+\]
+
+方法：令 $x = e^t$，则 $t = \ln x$。  
+有：
+\[
+\frac{dy}{dx} = \frac{1}{x} \frac{dy}{dt}, \quad
+\frac{d^2 y}{dx^2} = \frac{1}{x^2}\left(\frac{d^2 y}{dt^2} - \frac{dy}{dt}\right),
+\]
+
+最后化为：
+\[
+\frac{d^n y}{dt^n} + b_1 \frac{d^{n-1}y}{dt^{n-1}} + \cdots + b_{n-1} \frac{dy}{dt} + b_n y = 0.
+\]
+
+
+\section*{三、n 阶常系数非齐次线性微分方程}
+
+\paragraph{例 7}
+\[
+\frac{d^2 x}{dt^2} - x = \cos t
+\]
+
+\paragraph{解7}
+先求齐次方程 $\frac{d^2 x}{dt^2} - x = 0$ 的通解：
+\[
+\lambda^2 - 1 = 0 \quad \Rightarrow \quad \lambda = \pm 1.
+\]
+
+故齐次方程的通解为：
+\[
+x_h = C_1 e^{t} + C_2 e^{-t}.
+\]
+
+由常数变易法，设：
+\[
+x = C_1(t)e^{t} + C_2(t)e^{-t},
+\]
+
+代入并附加条件：
+\[
+\begin{cases}
+C_1'(t)e^{t} + C_2'(t)e^{-t} = 0, \\
+C_1'(t)e^{t} - C_2'(t)e^{-t} = \cos t,
+\end{cases}
+\]
+
+解得：
+\[
+\begin{cases}
+C_1'(t) = \frac{1}{2} e^{-t}\cos t, \\
+C_2'(t) = -\frac{1}{2} e^{t}\cos t.
+\end{cases}
+\]
+
+积分得：
+\[
+\begin{cases}
+C_1(t) = -\frac{1}{4}(\cos t - \sin t)e^{-t} + C_1, \\
+C_2(t) = -\frac{1}{4}(\cos t + \sin t)e^{t} + C_2.
+\end{cases}
+\]
+
+代入得：
+\[
+x = C_1 e^{t} + C_2 e^{-t} - \frac{1}{2}\cos t.
+\]
+
+\paragraph{易得特解} 
+令 $x_p = A \cos t$，代入 $\frac{d^2 x}{dt^2} - x = \cos t$，有：
+\[
+-A \cos t - A \cos t = \cos t \quad \Rightarrow \quad A = -\frac{1}{2}.
+\]
+
+因此总通解为：
+\[
+x = C_1 e^{t} + C_2 e^{-t} - \frac{1}{2}\cos t.
+\]
+
+
+\paragraph{例 8}
+\[
+\frac{d^2 x}{dt^2} + p \frac{dx}{dt} + qx = e^{at}, 
+\quad (p, q, a \text{ 为常数})
+\]
+
+\paragraph{Sol.}
+设特解为 $x^* = A e^{at}$，代入方程得：
+\[
+(Aa^2 + pAa + qA)e^{at} = e^{at}.
+\]
+
+\begin{enumerate}
+  \item 若 $a^2 + pa + q \neq 0$（即 $a$ 不是特征根），  
+  则
+  \[
+  A = \frac{1}{a^2 + pa + q},
+  \quad
+  x^* = \frac{1}{a^2 + pa + q} e^{at}.
+  \]
+
+  \item 若 $a^2 + pa + q = 0$（即 $a$ 是特征根），  
+  此时无形如 $Ae^{at}$ 的特解，改设 $x^* = A t e^{at}$，代入得：
+  \[
+  (2Aa + Aa^2 + pA + pAa t + qA t)e^{at} = e^{at}.
+  \]
+  由此可得：
+  \[
+  \begin{cases}
+  A(a^2 + pa + q) = 0, \\
+  (2a + p)A = 1.
+  \end{cases}
+  \]
+  解得：
+  \[
+  A = \frac{1}{2a + p}, \quad
+  x^* = \frac{t}{2a + p} e^{at}.
+  \]
+
+  \item 若 $2a + p = 0$（即 $a$ 为重根），  
+  此时无形如 $Ate^{at}$ 的特解，改设 $x^* = A t^2 e^{at}$。
+\end{enumerate}
+
+
+
+\paragraph{Rem.}
+若特解为 $x^* = A t^k e^{at}$，  
+当 $\lambda = 0, 1, 2, \dots$ 为齐次方程的重根时，  
+$k$ 的取值即为相应的重数。
+
+
+
+\paragraph{例 9}
+\[
+\frac{d^2 x}{dt^2} - 2\frac{dx}{dt} - 3x = e^{-t}.
+\]
+
+\paragraph{Sol.}
+对应齐次方程：
+\[
+\frac{d^2 x}{dt^2} - 2\frac{dx}{dt} - 3x = 0.
+\]
+
+其特征方程：
+\[
+\lambda^2 - 2\lambda - 3 = 0
+\quad \Rightarrow \quad
+\lambda = 3, -1.
+\]
+
+因此齐次通解为：
+\[
+x_h = C_1 e^{3t} + C_2 e^{-t}.
+\]
+
+设非齐次特解 $x^* = A t e^{-t}$，代入可得：
+\[
+A = -\frac{1}{4}.
+\]
+
+于是非齐次通解为：
+\[
+x = C_1 e^{3t} + C_2 e^{-t} - \frac{1}{4} t e^{-t}.
+\]
+
+
+
+\subsection*{1. 形式}
+\[
+L[x] = \frac{d^n x}{dt^n} + a_1 \frac{d^{n-1}x}{dt^{n-1}} + \cdots + a_n x = f(t),
+\]
+
+其中 $a_1, a_2, \ldots, a_n$ 为常数，$f(t)$ 为连续函数。
+
+
+
+\subsection*{2. 解法}
+常用方法包括：
+\textbf{待定系数法}、\textbf{Laplace 变换法}
+
+
+
+\subsubsection*{类型 I}
+若
+\[
+L[x] = f(t) = P_m(t)e^{rt} 
+= (b_0 t^m + b_1 t^{m-1} + \cdots + b_m)e^{rt},
+\]
+
+其中 $r, b_i$ 为实常数。
+
+\paragraph{类型 I 求解}
+设有特解 $x^* = (b_0 t^m + \cdots + b_m)t^k e^{rt}$  代入得，
+其中的取值取决于齐次方程特征根的重数 $k$
+\begin{itemize}
+\item[(i)] 若 $r = 0$，则 $f(t) = b_0 t^m + \cdots + b_m$
+
+(1) 若 $r = 0$ 不是特征根，取 $x^* = b_0 t^m + \cdots + b_m$
+
+
+(2) 若 $r = 0$ 是上重特征根，相应 $a_{n-1} = a_{n-2} = \cdots = a_{n-k+1} = 0$, $a_{n-k} \ne 0$
+
+则 $\dfrac{d^n x}{dt^n} + a_1 \dfrac{d^{n-1}x}{dt^{n-1}} + \cdots + a_{n-k} \dfrac{d^k x}{dt^k} = f(t)$
+
+令 $z = \dfrac{d^k x}{dt^k}$，方程化为 $\dfrac{d^{n-k}z}{dt^{n-k}} + a_1 \dfrac{d^{n-k-1}z}{dt^{n-k-1}} + \cdots + a_{n-k}z = f(t)$
+
+有
+\[
+\dfrac{d^k x}{dt^k} = b_0 t^m + \cdots + b_m
+\]
+
+可写成 $t$ 的 $m+k$ 次多项式，其中 $t$ 的次数仅小于上的项
+带有任意常数。取任意常数为 0，有特解
+\[
+x = t^k (a_0 t^m + \cdots + a_m),
+\]
+
+其中 $a_0, \cdots, a_m$ 为待定系数。
+
+
+\paragraph{例10（1）} 
+\[
+\dfrac{d^2 x}{dt^2} - 2\dfrac{dx}{dt} - 3x = 3t + 1
+\]
+
+\paragraph{解10（1）} 
+齐次方程有通解 $x = C_1 e^{3t} + C_2 e^{-t}$
+
+设非齐次方程有特解 $x^* = t^0 (A t + B) e^{0 \cdot t} = A t + B$
+
+代入方程： $-2A - 3A t - 3B = 3t + 1$,  $A = -1, B = \dfrac{1}{3}$
+
+有特解 $x^* = -t +\dfrac{1}{3}$
+
+因此非齐次方程的通解为 $x = C_1 e^{3t} + C_2 e^{-t} - t + \dfrac{1}{3}$
+
+
+
+\paragraph{例10（2）}  $\dfrac{d^2 x}{dt^2} - \dfrac{dx}{dt} = 3t + 1$
+\paragraph{解10（2）} 
+齐次方程有通解 $x = C_1 + C_2 e^t$
+
+设非齐次方程有特解 $x^* = t^1 (A t + B)$
+
+代入方程： $2A - 2A t - B = 3t + 1$,  $A = \dfrac{3}{2}, B = -4$
+
+有特解 $x^* = \dfrac{3}{2}t^2 - 4t$
+
+因此非齐次方程的通解为 $x = C_1 + C_2 e^t + \dfrac{3}{2}t^2 - 4t$
+
+
+\item[(ii)] 若 $r \neq 0$, 作变量替换 $x = y e^{rt}$
+方程化为
+\[
+\dfrac{d^n y}{dt^n} + A_1 \dfrac{d^{n-1} y}{dt^{n-1}} + \cdots + A_{n-1} \dfrac{dy}{dt} + A_n y = b_0 t^m + \cdots + b_m
+\]
+其中 $A_1, \cdots, A_{n-1}, A_n$ 为常数，特征根 $r$ 对应原特征根，
+且重数相同。
+
+① 若 $r$ 不是原方程特征根,  另设特解 $y^* = B_0 t^m + \cdots + B_m$
+其中 $B_0, \cdots, B_m$ 为待定系数。
+从而 $x^* = (B_0 t^m + \cdots + B_m)e^{rt}$
+
+② 若 $r$ 是原方程上重特征根, 则设特解 $y^* = t^k (B_0 t^m + \cdots + B_m)$
+从而 $x^* = t^k (B_0 t^m + \cdots + B_m)e^{rt}$
+
+
+
+\paragraph{例11}
+\[
+\dfrac{d^3 x}{dt^3} + 3 \dfrac{d^2 x}{dt^2} + 3 \dfrac{dx}{dt} + x = e^{-t}(t-5)
+\]
+
+\paragraph{解11}
+齐次方程 $\dfrac{d^3 x}{dt^3} + 3\dfrac{d^2 x}{dt^2} + 3\dfrac{dx}{dt} + x = 0$
+
+有通解 $x = C_1 e^{-t} + C_2 t e^{-t} + C_3 t^2 e^{-t}$
+
+设特解 $x^* = t^3 (A t + B)e^{-t}$
+
+代入方程，$(24A t + 6B)e^{-t} = e^{-t}(t - 5)$
+
+$A = \dfrac{1}{24}, \; B = -\dfrac{5}{6}$
+
+非齐次方程有特解 $x = (C_1 + C_2 t + C_3 t^2)e^{-t} + (\dfrac{1}{24}t^4 - \dfrac{5}{6}t^3)e^{-t}$
+
+\end{itemize}
+
+\subsubsection*{类型 II}
+\[
+L[x] = f(t) = (A_m(t)\cos\beta t + B_p(t)\sin\beta t)e^{\alpha t}
+\]
+
+其中 $\alpha, \beta$ 为实常数, $A_m(t), B_p(t)$ 分别为 $m,p$ 次多项式。  
+设 $L = \max\{m,p\}$。
+
+\paragraph*{类型 II 求解}
+特解形式可设为 $x = t^k (P_L(t)\cos\beta t + Q_L(t)\sin\beta t)e^{\alpha t}$
+
+其中 $k$ 为特征方程的根 $\alpha \pm i\beta$ 的重数，$P_L(t), Q_L(t)$ 为待定
+次数的 $L$ 次多项式。
+
+由类型 I，当 $f(t)$ 为复数时也成立：
+\[
+\begin{aligned}
+f(t) &= (A_m(t)\cos\beta t + B_p(t)\sin\beta t) \\
+&= \left(A_m(t)\dfrac{e^{i\beta t} + e^{-i\beta t}}{2} + B_p(t)\dfrac{e^{i\beta t} - e^{-i\beta t}}{2i}\right)e^{\alpha t} \\
+&= \dfrac{A_m(t) - iB_p(t)}{2}e^{(\alpha + i\beta)t} + \dfrac{A_m(t) + iB_p(t)}{2}e^{(\alpha - i\beta)t}
+\end{aligned}
+\]
+
+
+令 $f_1(t) = \frac{(A_m(t) - i B_p(t))}{2} e^{(\alpha + i\beta)t}$，$f_2(t) =\frac{ (A_m(t) + i B_p(t))}{2} e^{(\alpha - i\beta)t}$。
+
+由叠加原理，$L[x] = f(t)$ 与 $L[x] = f_1(t)$ 与 $L[x] = f_2(t)$ 的解都应为其线性组合，
+即必为 $L[x] = f_1(t) + f_2(t)$ 的解。
+
+又 $f_1(t) = \overline{f_2(t)}$, 若 $y_1$ 为 $L[x] = f_1(t)$ 的解, 
+则 $\overline{y_1}$ 也是 $L[x] = f_2(t)$ 的解。
+
+$L[x] = f_1(t)$ 的特解形式可设为
+\[
+x_1 = t^k D_L(t) e^{(\alpha + i\beta)t}
+\]
+
+因此 $L[x] = f(t)$ 的特解形式可设为
+\[
+x = t^k D_L(t) e^{(\alpha + i\beta)t} + \overline{D_L(t)} e^{(\alpha - i\beta)t}
+\]
+
+可写为
+\[
+\begin{aligned}
+x &= t^k \left[ D_L(t)(\cos\beta t + i\sin\beta t) + \overline{D_L(t)}(\cos\beta t - i\sin\beta t) \right] e^{\alpha t} \\
+&= 2 t^k \left[ \operatorname{Re}(D_L(t)) \cos\beta t + \operatorname{Im}(D_L(t)) \sin\beta t \right] e^{\alpha t} \\
+&= t^k \left[ P_L(t) \cos\beta t + Q_L(t) \sin\beta t \right] e^{\alpha t}
+\end{aligned}
+\]
+
+其中 $P_L(t) = 2 \operatorname{Re}(D_L(t))$, $Q_L(t) = 2 \operatorname{Im}(D_L(t))$ $L = \max\{m,p\}$, 且 $k$ 取值由 $\alpha \pm i\beta$ 特征根重数决定。
+
+
+\paragraph{例12(1)} 
+ $\dfrac{d^2 x}{dt^2} + 4\dfrac{dx}{dt}+4x = \cos 2t$
+
+\paragraph{解12(1)}
+齐次方程 $\dfrac{d^2 x}{dt^2} + 4\dfrac{dx}{dt}+4x = \cos 2t$，有通解 $y = (C_1 + C_2 t)e^{-2t}$
+
+设非齐次方程特解 $y^* = t^0 [A \cos 2t + B \sin 2t] \cdot e^{0t} = A \cos 2t + B \sin 2t$
+
+代入方程化简得，
+\[
+8B \cos 2t - 8A \sin 2t = \cos 2t, \quad A = 0, \; B = \dfrac{1}{8}
+\]
+
+特解 $y^* = \dfrac{1}{8}\sin 2t$，
+通解 $y = (C_1 + C_2 t)e^{-2t} + \dfrac{1}{8}\sin 2t$
+\paragraph{例12(2)}$\dfrac{d^2 y}{dt^2} + 4y = \cos t + \sin t$
+
+\paragraph{Rem.} 也可采用复数法：
+
+$f(t) = A(t)e^{\alpha t}\cos\beta t$ 或 $f(t) = A(t)e^{\alpha t}\sin\beta t$
+
+可先求 $L[y] = A(t)e^{(\alpha + i\beta)t}$ 的解，然后分别取实部、虚部。
+
+\paragraph{例：}
+$\dfrac{d^2 x}{dt^2} + 4\dfrac{dx}{dt}+4x = e^{2it}=\cos 2t$，用类型 I 求解。
+
+有特解 $y^* = \dfrac{1}{-8}e^{2i t} = -\dfrac{i}{8}(\cos 2t + i \sin 2t)
+= -\dfrac{1}{8}\sin 2t - \dfrac{1}{8}\cos 2t i, \text{ 取其实部 } x^* = \dfrac{1}{8}\sin 2t$
+
+\section*{四、质点振动}
+
+\subsection*{1. 无阻尼自由振动}
+切向速度 $v = L \dfrac{d\varphi}{dt}$
+
+由 $F = ma$, $-mg \sin\varphi = m \dfrac{d^2 s}{dt^2} = m L \dfrac{d^2 \varphi}{dt^2}$
+
+\[
+\dfrac{d^2 \varphi}{dt^2} + \dfrac{g}{L} \sin\varphi = 0
+\]
+
+当 $\varphi$ 很小时，$\sin\varphi \approx \varphi$，$\dfrac{d^2 \varphi}{dt^2} + \dfrac{g}{L} \varphi = 0$，
+特征方程 $\lambda^2 + \omega^2 = 0$, $\omega^2 = \dfrac{g}{L}$
+
+\[
+\Rightarrow \varphi = C_1 \cos\omega t + C_2 \sin\omega t , \quad C_1, C_2 \text{ 为任意常数}
+\]
+
+\paragraph{Rem.} 
+\begin{itemize}
+  \item[(1)] $\varphi = A \sin(\omega t + \theta), \quad A = \sqrt{C_1^2 + C_2^2}, \;
+\sin\theta = \dfrac{C_1}{A}, \; \cos\theta = \dfrac{C_2}{A}
+\Rightarrow \theta = \arctan\dfrac{C_1}{C_2}$
+
+
+  \item[(2)]初始条件：$\varphi(t_0) = \varphi_0, \; \dfrac{d\varphi}{dt}\big|_{t=t_0} = 0\Rightarrow \text{特解 } \varphi = \varphi_0 \sin(\omega t + \tfrac{\pi}{2})
+$
+
+\end{itemize}
+
+\subsection*{2. 有阻尼自由振动}
+阻力与速度成正比，设阻力系数为 $\mu$，得：
+
+\[
+\dfrac{d^2 \varphi}{dt^2} + 2n \dfrac{d\varphi}{dt} + \omega_0^2 \varphi = 0,
+\quad \text{其中 } 2n = \dfrac{\mu}{m}, \; \omega_0^2 = \dfrac{g}{L}
+\]
+
+特征方程 $\lambda^2 + 2n\lambda + \omega_0^2 = 0$
+
+特征根 $\lambda_{1,2} = -n \pm \sqrt{n^2 - \omega_0^2}$
+
+① $n < \omega_0$，$\lambda_{1,2}$ 为共轭复根，记 $\omega_1 = \sqrt{\omega_0^2 - n^2}$，
+$\lambda_{1,2} = -n \pm i \omega_1$
+\[
+\text{通解 } \varphi = e^{-nt} (C_1 \cos \omega_1 t + C_2 \sin \omega_1 t)
+= A e^{-nt} \sin(\omega_1 t + \theta)
+\]
+
+② $n > \omega_0$，$\lambda_1, \lambda_2$ 为两个不同实根，
+\[
+\text{通解 } \varphi = C_1 e^{\lambda_1 t} + C_2 e^{\lambda_2 t}
+\]
+
+③ $n = \omega_0$，$\lambda_1 = \lambda_2 = -n$ 为两相等实根，
+\[
+\text{通解 } \varphi = e^{-nt}(C_1 + C_2 t)
+\]
+
+
+
+\subsection*{3. 无阻尼强迫振动}
+
+受到外力 $F(t)$, 有：
+
+\[
+\dfrac{d^2 \varphi}{dt^2} + \dfrac{\mu}{m} \dfrac{d\varphi}{dt} + \dfrac{g}{L} \varphi = \dfrac{1}{mL} F(t)
+\]
+
+若 $\mu = 0, \; \omega_0^2 = \dfrac{g}{L}$, 设 $F(t) = H \sin p t$，
+则：
+\[
+\dfrac{d^2 \varphi}{dt^2} + \omega_0^2 \varphi = H \sin p t
+\]
+
+齐次方程通解:
+\[
+ \varphi = A \sin(\omega t + \theta)
+\]
+
+非齐次方程: 若
+\[
+\omega \neq p, \text{ 设 } \varphi = M \cos p t + N \sin p t
+\]
+
+代入得，$M = 0, \; N = \dfrac{H}{\omega_0^2 - p^2}$
+
+通解 $\varphi = A \sin(\omega t + \theta) + \dfrac{H}{\omega_0^2 - p^2} \sin p t$
+
+若 $\omega = p$, 设 $\varphi = t(M \cos p t + N \sin p t)$
+
+代入得 $M = -\dfrac{H}{2\omega}, \; N = 0$
+
+通解 $\varphi = A \sin(\omega t + \theta) - \dfrac{H t}{2\omega} \cos p t$
+
+
+
+\subsection*{4. 有阻尼强迫振动}
+
+\[
+\dfrac{d^2 \varphi}{dt^2} + 2n \dfrac{d\varphi}{dt} + \omega_0^2 \varphi = H \sin p t
+\]
+
+$n < \omega_0$ 时，有齐次方程通解
+\[
+\varphi = A e^{-nt} \sin(\omega_1 t + \theta), \quad \omega_1 = \sqrt{\omega_0^2 - n^2}
+\]
+
+非齐次方程特解
+\[
+\varphi_p = \dfrac{-2 n p H}{(\omega_0^2 - p^2)^2 + 4 n^2 p^2} \cos p t
++ \dfrac{(\omega_0^2 - p^2)H}{(\omega_0^2 - p^2)^2 + 4 n^2 p^2} \sin p t
+\]
+
+\mysection{4.3 高阶方程的降阶及积分法解法}
+
+
+\section*{一、可降阶方程的降阶和幂级数解法}
+
+$n$ 阶微分方程：$F(t, y, y', \ldots, y^{(n)}) \equiv 0$
+
+
+\paragraph{例1}
+\[
+\dfrac{d^5 y}{dt^5} - \frac{1}{t} \dfrac{d^4 y}{dt^4} = 0
+\]
+
+\paragraph{解1}
+令 $\dfrac{d^4x}{dt^4} = y$, 则 $\dfrac{d^5 y}{dt^5} = \dfrac{dy}{dt}$，
+因此 $\dfrac{dy}{dt} - \frac{1}{t} y= 0$
+
+求解可得 $y=Ct$，
+积分有：
+\[
+y = C_1 t^5 + C_2 t^3 + C_2 t^2 + C_4 t + C_5
+\]
+
+\paragraph{Rem.第一类：不显含未知函数及其 $k-1$ 阶导数的微分方程 $(1 \le k \le n)$}
+
+\[
+F(t, y, y', \ldots, y^{(n)}) = 0
+\]
+
+令 $y^{(k)} = p$, 则 $F(t, y, \ldots, y^{(k-1)}, p, \ldots, y^{(n-1)}) = 0$
+\[
+\Rightarrow y^{(k)} = \psi(t, C_1, C_2, \ldots, C_{n-k})
+\]
+
+则 $y^{(n)}$ 为 $\psi(t, C_1, C_2, \ldots, C_n)$
+
+
+\paragraph{例2}
+\[
+xx'' + (x')^2 = 0
+\]
+
+\paragraph{解2}
+令 $x' = y$, 则 $x'' = y \dfrac{dy}{dx}$，
+因此 $x y\dfrac{dy}{dx} + y^2 = 0$
+
+求解有 $y = 0$ 或 $x \dfrac{dy}{dx} +y=0$
+
+即 $x' = 0$ , $xx' = C$, 或$x^2=C_1t+C_2$
+
+
+
+\paragraph{Rem.第二类：不显含自变量的自治方程}
+
+\[
+F(y, y', \ldots, y^{(n)}) = 0
+\]
+
+令 $y' = p$, 则 $y'' = p \dfrac{dp}{dy}$，
+$y^{(3)} = p \dfrac{d}{dy} \left( p \dfrac{dp}{dy} \right)$，
+依此类推：
+
+方程可化为
+\[
+G(p, \dfrac{dp}{dy}, \ldots, \dfrac{d^{n-1}p}{dy^{n-1}}) = 0
+\]
+
+求解后代回 $y' = p$ 求得对应通解。
+
+
+\paragraph{例3}
+\[
+tx x'' + t x'^2 - xx' = 0
+\]
+
+\paragraph{解3}
+令 $x = e^u$, 则有 $x' = u' e^u$, $x'' = e^u(u'' + u'^2)$
+
+代入得 $(t u'' + t u'^2) - u' = 0$ （Bernoulli方程）
+
+
+解得：
+\[
+z = \dfrac{t}{t^2 + C_1}, \quad x = e^u = e^{\int z\, dt} = e^{\tfrac{1}{2} \ln(C_1 + t^2)} + C = C_2 \sqrt{C_1 + t^2}
+\]
+
+
+\paragraph*{Rem. 第三类：齐次微分方程}
+
+\[
+F(t, y, \ldots, y^{(n)}) = 0,
+\]
+$F$ 是关于 $y, y', \ldots, y^{(n)}$ 的齐次 $k$ 次函数。
+
+可得
+\[
+F(t, \alpha y, \alpha y', \ldots, \alpha y^{(n)}) = \alpha^k F(t, y, \ldots, y^{(n)}).
+\]
+
+令 $y = e^u$, 则方程化为 $G(t, 1, u', \ldots, u^{(n)}) = 0$, 不显含未知函数 $y$。
+
+若以 $z = e^u$, 则方程化为 $G(t, z, \ldots, z^{(n-1)}) = 0$。
+
+
+
+\paragraph*{例4}
+\[
+x^2 y'' + (2x + 1) y' = 0
+\]
+
+\paragraph*{解4}
+令 $y' = z$, 则 $y'' = z' y' = z \dfrac{dz}{dy}$, 故 $x^2 z' (2x + 1) z = 0$。
+
+另法： $(x^2 y'' + 2xy') + y' = 0$，即 $(x^2y' + y)' = 0$。
+
+通解为 $y = C_1  + C_2 e^{\frac{1}{x}}$。
+
+
+
+\paragraph*{Rem.第四类：恰当微分方程}
+
+若
+\[
+F(t, y, \ldots, y^{(n)}) = 0
+\]
+
+满足
+\[
+\dfrac{d}{dt} \varphi(t, y, \ldots, y^{(n-1)}) = 0,
+\]
+
+显然可得
+\[
+\varphi(t, y, \ldots, y^{(n-1)}) = C.
+\]
+
+
+
+\paragraph*{Rem. 第五类：已知非零特解的齐次线性微分方程}
+\[
+\dfrac{d^n y}{dt^n} + a_1(t) \dfrac{d^{n-1} y}{dt^{n-1}} + \cdots + a_n(t) y = 0
+\]
+
+\paragraph*{例5}
+\[
+x'' + P(t) x' + Q(t) x = 0
+\]
+已知 $x_1 \neq 0$, 则通解为
+\[
+x = x_1 \left( C_1 \int \dfrac{1}{x_1^2} e^{-\int P(t) dt} dt + C_2 \right)
+\]
+
+\paragraph*{\proof}
+由于 $x_1 \neq 0$, 令 $y = x_1 y$, 则 $x' = x_1' y + x_1 y'$, $y'' = x_1'' y + 2 x_1' y' + x_1 y''$
+
+代入得：
+\[
+x_1'' y + (2 x_1' + P(t) x_1) y' + (x_1'' + P(t) x_1' + Q(t) x_1) y_2 = 0
+\]
+
+由 $x_1'' + P(t) x_1' + Q(t) x_1 = 0$，得
+\[
+x_1 y'' + (2 x_1' + P(t) x_1) y' = 0
+\]
+
+
+
+积分得
+\[
+x = \dfrac{C}{x_1^2} e^{-\int P(t) dt}
+\]
+
+再积分：
+\[
+x = x_1y=x_1( \int \dfrac{1}{y_1^2} e^{-\int P(t) dt} dt + C_2)
+\]
+
+
+此为原方程通解。
+
+
+
+\paragraph*{例6}
+\[
+x'' -2 (1 + \frac{1}{t}) x' + (1 + \frac{2}{t}) x = 0
+\]
+
+\paragraph*{解6}
+$x_1 = e^t$ 是原方程的一个特解, $P(t) = -2(1 + \frac{1}{t})$。
+
+\[
+x_1 = e^t \left( C_1 \int e^{-t} e^{-\int (1 + \frac{1}{t}) dt} dt + C_2 \right)
+= C_1 e^t t^3 + C_2 e^t
+\]
+\end{document}
